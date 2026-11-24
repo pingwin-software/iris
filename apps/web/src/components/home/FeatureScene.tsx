@@ -47,10 +47,10 @@ export function FeatureCard({
     <ScrollReveal as="li" delay={Math.min(index, 5) * 75} className="flex">
       <div
         className={cn(
-          "flex w-full flex-col bg-[var(--home-surface,#FFFFFF)]",
+          "flex w-full flex-col overflow-hidden rounded-xl",
           variant === "cell"
-            ? "border-r border-b border-[var(--home-border,#D8D5CD)] transition-[background-color] duration-200 ease-out"
-            : "overflow-hidden rounded-lg border border-[var(--home-border,#D8D5CD)] transition-[border-color] duration-200 ease-out hover:border-[var(--home-border-strong,#B5B0A4)]",
+            ? "bg-[var(--home-bg,#F6F5F1)] transition-[background-color] duration-200 ease-out hover:bg-[var(--home-surface-recessed,#EEECE6)]/70"
+            : "bg-[var(--home-surface,#FFFFFF)] shadow-[0_1px_3px_rgba(17,18,21,0.04),0_8px_24px_-12px_rgba(17,18,21,0.06)] transition-[box-shadow] duration-200 ease-out hover:shadow-[0_4px_12px_rgba(17,18,21,0.06),0_14px_30px_-14px_rgba(17,18,21,0.10)]",
         )}
       >
         <FeatureScene scene={feature.scene} />
@@ -87,7 +87,7 @@ export function FeatureScene({ scene }: { scene: SceneId }): React.JSX.Element {
       ref={ref}
       data-scene={scene}
       data-playing={playing ? "true" : "false"}
-      className="iris-scene border-b border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface-recessed,#EEECE6)] p-3"
+      className="iris-scene bg-[var(--home-surface-recessed,#EEECE6)]/75 p-3"
     >
       <svg aria-hidden viewBox="0 0 240 96" className="block h-auto w-full" focusable="false">
         {SCENES[scene]}

@@ -97,9 +97,9 @@ export function ModulePlayground(): React.JSX.Element {
             "--iris-accent": "var(--home-accent, #E85A2D)",
           } as CSSProperties
         }
-        className="iris-reveal overflow-hidden rounded-xl border border-[var(--home-border,#262932)] bg-[var(--home-surface,#121418)] lg:sticky lg:top-24 lg:self-start"
+        className="iris-reveal overflow-hidden rounded-xl bg-[var(--home-surface,#121418)] ring-1 ring-white/[0.06] lg:sticky lg:top-24 lg:self-start"
       >
-        <div className="border-b border-[var(--home-border,#262932)] bg-[var(--home-surface-recessed,#191C22)] px-5 py-4">
+        <div className="bg-[var(--home-surface-recessed,#191C22)] px-5 py-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
               <IrisMark className="h-5 w-5 shrink-0 text-[var(--home-ink,#F2F2F4)]" />
@@ -149,7 +149,7 @@ export function ModulePlayground(): React.JSX.Element {
         </ul>
 
         {enabled > 0 && (
-          <ul className="space-y-2.5 border-t border-[var(--home-border,#262932)] bg-[var(--home-surface-recessed,#191C22)] px-5 py-4 text-[length:var(--home-text-sm,0.875rem)] leading-[1.55] text-[var(--home-ink-muted,#A6AAB5)]">
+          <ul className="space-y-2.5 bg-[var(--home-surface-recessed,#191C22)] px-5 py-4 text-[length:var(--home-text-sm,0.875rem)] leading-[1.55] text-[var(--home-ink-muted,#A6AAB5)]">
             {MODULE_ORDER.filter((key) => modules[key]).map((key) => (
               <li key={key} className="animate-iris-rise">
                 <span className="font-semibold text-[var(--home-ink,#F2F2F4)]">
@@ -188,8 +188,8 @@ function ModuleCard({
         on
           ? "border-[var(--home-accent,#E85A2D)] bg-[rgba(232,90,45,0.06)] shadow-[0_0_0_1px_rgba(232,90,45,0.22)]"
           : available
-            ? "border-[var(--home-border,#262932)] bg-[var(--home-surface,#121418)] hover:border-[var(--home-border-strong,#3A3F4D)]"
-            : "border-[var(--home-border,#262932)] bg-[#0F1115]",
+            ? "border-white/[0.07] bg-[var(--home-surface,#121418)] hover:border-white/[0.14]"
+            : "border-transparent bg-[#0F1115]",
       )}
     >
       <div className="flex items-center justify-between gap-4">
@@ -202,12 +202,12 @@ function ModuleCard({
         >
           <span
             className={cn(
-              "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-[background-color,border-color,color] duration-200 motion-reduce:transition-none",
+              "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-[background-color,color] duration-200 motion-reduce:transition-none",
               on
-                ? "border-[rgba(232,90,45,0.45)] bg-[rgba(232,90,45,0.14)] text-[var(--home-accent-ink,#FF7A4D)]"
+                ? "bg-[rgba(232,90,45,0.16)] text-[var(--home-accent-ink,#FF7A4D)]"
                 : available
-                  ? "border-[var(--home-border,#262932)] bg-[var(--home-surface-recessed,#191C22)] text-[var(--home-ink,#F2F2F4)]"
-                  : "border-[var(--home-border,#262932)] bg-[var(--home-surface,#121418)] text-[var(--home-ink-subtle,#7E8390)]",
+                  ? "bg-[var(--home-surface-recessed,#191C22)] text-[var(--home-ink,#F2F2F4)]"
+                  : "bg-[var(--home-surface,#121418)] text-[var(--home-ink-subtle,#7E8390)]",
             )}
           >
             <copy.icon aria-hidden className="h-5 w-5" strokeWidth={1.75} />

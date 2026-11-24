@@ -93,14 +93,13 @@ export function WorkOrderDemo(): React.JSX.Element {
     <div className="mx-auto w-full max-w-5xl">
       <div
         data-testid="work-order-demo"
-        className="overflow-hidden rounded-xl border border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface,#FFFFFF)] text-left shadow-[0_24px_60px_-18px_rgba(17,18,21,0.12),0_4px_14px_-4px_rgba(17,18,21,0.05)]"
+        className="overflow-hidden rounded-2xl bg-[var(--home-surface,#FFFFFF)] text-left shadow-[0_20px_56px_-18px_rgba(17,18,21,0.12),0_2px_10px_-2px_rgba(17,18,21,0.05)]"
       >
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface-recessed,#EEECE6)] px-4 py-3 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-[var(--home-surface-recessed,#EEECE6)] px-4 py-3.5 sm:px-6">
           <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
             <span className="text-[length:var(--home-text-sm,0.875rem)] font-medium text-[var(--home-ink-muted,#4A4D55)]">
               {clientView ? "Iris · javni status" : "Radni nalog"}
             </span>
-            <span aria-hidden className="hidden h-4 w-px bg-[var(--home-border-strong,#B5B0A4)] sm:inline-block" />
             <span className="font-[family-name:var(--home-font-display)] text-[length:var(--home-text-body,1rem)] font-semibold tracking-[-0.015em] text-[var(--home-ink,#111215)] tnum">
               {ORDER.number}
             </span>
@@ -108,10 +107,9 @@ export function WorkOrderDemo(): React.JSX.Element {
               key={statusLabel}
               role="status"
               aria-label={`Status: ${statusLabel}`}
-              className="animate-iris-pop inline-flex items-center gap-1.5 rounded-md border bg-[var(--home-surface,#FFFFFF)] px-2.5 py-1 text-[length:var(--home-text-sm,0.875rem)] font-medium leading-none"
+              className="animate-iris-pop inline-flex items-center gap-1.5 rounded-md bg-[var(--home-surface,#FFFFFF)] px-2.5 py-1 text-[length:var(--home-text-sm,0.875rem)] font-medium leading-none shadow-[0_1px_2px_rgba(17,18,21,0.06)]"
               style={{
                 color: statusColor,
-                borderColor: "color-mix(in srgb, currentColor 32%, transparent)",
               }}
             >
               <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: statusColor }} />
@@ -119,7 +117,7 @@ export function WorkOrderDemo(): React.JSX.Element {
             </span>
           </div>
 
-          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
+          <div className="flex w-full flex-wrap items-center gap-2.5 sm:w-auto sm:justify-end">
             <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
               {terminal ? (
                 <button
@@ -145,7 +143,7 @@ export function WorkOrderDemo(): React.JSX.Element {
                 <button
                   type="button"
                   onClick={() => setCancelled(true)}
-                  className="iris-focusable iris-press inline-flex min-h-[44px] items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface,#FFFFFF)] px-3 py-1.5 text-[length:var(--home-text-sm,0.875rem)] font-medium text-[var(--home-ink-muted,#4A4D55)] transition-[color,border-color,background-color,transform] duration-150 ease-out hover:border-[var(--home-border-strong,#B5B0A4)] hover:text-[var(--home-ink,#111215)] sm:min-h-[36px]"
+                  className="iris-focusable iris-press inline-flex min-h-[44px] items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-[var(--home-surface,#FFFFFF)]/80 px-3 py-1.5 text-[length:var(--home-text-sm,0.875rem)] font-medium text-[var(--home-ink-muted,#4A4D55)] transition-[color,background-color,transform] duration-150 ease-out hover:bg-[var(--home-surface,#FFFFFF)] hover:text-[var(--home-ink,#111215)] sm:min-h-[36px]"
                 >
                   <X aria-hidden className="h-4 w-4 shrink-0" />
                   Otkaži nalog
@@ -153,12 +151,10 @@ export function WorkOrderDemo(): React.JSX.Element {
               )}
             </div>
 
-            <span aria-hidden className="hidden h-5 w-px bg-[var(--home-border,#D8D5CD)] sm:inline-block" />
-
             <div
               role="group"
               aria-label="Prikaz naloga"
-              className="inline-flex w-full items-center rounded-lg border border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface,#FFFFFF)] p-0.5 sm:w-auto"
+              className="inline-flex w-full items-center rounded-lg bg-[var(--home-surface,#FFFFFF)]/80 p-1 sm:w-auto"
             >
               <button
                 type="button"
@@ -248,7 +244,7 @@ function InternalView({
     <div>
       <div
         aria-hidden="true"
-        className="border-b border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface,#FFFFFF)] px-4 py-3 sm:px-6"
+        className="bg-[var(--home-surface,#FFFFFF)] px-4 pt-4 pb-1 sm:px-6"
       >
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:grid sm:grid-cols-5 sm:gap-3">
           {STEPS.map((entry, index) => {
@@ -316,11 +312,11 @@ function InternalView({
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.9fr)]">
         <div className="min-w-0 p-5 sm:p-7">
-          <dl className="divide-y divide-[var(--home-border,#D8D5CD)]/60">
+          <dl className="space-y-2.5">
             {rows.map((row) => (
               <div
                 key={row.label}
-                className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2.5 text-[length:var(--home-text-sm,0.875rem)] first:pt-0 last:pb-0"
+                className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-0.5 text-[length:var(--home-text-sm,0.875rem)]"
               >
                 <dt className="text-[var(--home-ink-muted,#4A4D55)]">{row.label}</dt>
                 <dd className={cn("text-right font-medium text-[var(--home-ink,#111215)]", row.numeric && "tnum")}>
@@ -330,14 +326,14 @@ function InternalView({
             ))}
           </dl>
 
-          <div className="mt-6 border-t border-[var(--home-border,#D8D5CD)] pt-5">
+          <div className="mt-6 rounded-xl bg-[var(--home-bg,#F6F5F1)]/80 p-4 sm:p-5">
             <div tabIndex={0} role="region" aria-label="Stavke naloga" className="iris-focusable overflow-x-auto">
               <table className="w-full border-collapse text-[length:var(--home-text-sm,0.875rem)]">
                 <caption className="mb-3 text-left font-[family-name:var(--home-font-display)] text-[length:var(--home-text-sm,0.875rem)] font-semibold text-[var(--home-ink,#111215)]">
                   Stavke
                 </caption>
                 <thead>
-                  <tr className="border-b border-[var(--home-border,#D8D5CD)] text-[var(--home-ink-muted,#4A4D55)]">
+                  <tr className="text-[var(--home-ink-muted,#4A4D55)]">
                     <th scope="col" className="pb-2 pr-3 text-left font-medium">
                       Stavka
                     </th>
@@ -349,25 +345,25 @@ function InternalView({
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--home-border,#D8D5CD)]/60 text-[var(--home-ink,#111215)]">
+                <tbody className="text-[var(--home-ink,#111215)]">
                   {LINES.map((line) => (
                     <tr key={line.name}>
-                      <td className="py-2.5 pr-3">{line.name}</td>
-                      <td className="whitespace-nowrap px-2 py-2.5 text-right text-[var(--home-ink-muted,#4A4D55)] tnum">
+                      <td className="py-2 pr-3">{line.name}</td>
+                      <td className="whitespace-nowrap px-2 py-2 text-right text-[var(--home-ink-muted,#4A4D55)] tnum">
                         {line.quantity}
                       </td>
-                      <td className="whitespace-nowrap py-2.5 pl-2 text-right font-medium tnum">
+                      <td className="whitespace-nowrap py-2 pl-2 text-right font-medium tnum">
                         {formatMoney(line.price).replace(" RSD", "")}
                       </td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="border-t border-[var(--home-border,#D8D5CD)] text-[var(--home-ink,#111215)]">
-                    <th scope="row" colSpan={2} className="pt-3 text-left font-semibold">
+                  <tr className="text-[var(--home-ink,#111215)]">
+                    <th scope="row" colSpan={2} className="pt-3.5 text-left font-semibold">
                       Ukupno (neto)
                     </th>
-                    <td className="whitespace-nowrap pt-3 pl-2 text-right font-semibold tnum">
+                    <td className="whitespace-nowrap pt-3.5 pl-2 text-right font-semibold tnum">
                       {formatMoney(total)}
                     </td>
                   </tr>
@@ -377,7 +373,7 @@ function InternalView({
           </div>
         </div>
 
-        <div className="min-w-0 border-t border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface-recessed,#EEECE6)]/55 p-5 sm:p-7 lg:border-l lg:border-t-0">
+        <div className="min-w-0 bg-[var(--home-bg,#F6F5F1)]/85 p-5 sm:p-7">
           <div className="font-[family-name:var(--home-font-display)] text-[length:var(--home-text-sm,0.875rem)] font-semibold text-[var(--home-ink,#111215)]">
             Istorija naloga
           </div>
@@ -397,7 +393,7 @@ function InternalView({
                   )}
                   <span
                     aria-hidden
-                    className="relative z-10 mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ring-4 ring-[var(--home-surface-recessed,#EEECE6)]"
+                    className="relative z-10 mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ring-4 ring-[var(--home-bg,#F6F5F1)]"
                     style={{
                       backgroundColor: isLatest ? statusColor : "var(--home-border-strong,#B5B0A4)",
                     }}
@@ -431,7 +427,7 @@ function ClientView({ statusLabel }: { statusLabel: string }): React.JSX.Element
 
   return (
     <div className="p-5 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface-recessed,#EEECE6)] px-3.5 py-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-[var(--home-surface-recessed,#EEECE6)] px-3.5 py-2.5">
         <span className="inline-flex min-w-0 items-center gap-2 text-[length:var(--home-text-sm,0.875rem)] font-medium text-[var(--home-ink,#111215)] tnum">
           <Link2 aria-hidden className="h-4 w-4 shrink-0 text-[var(--home-accent,#D4481D)]" />
           <span className="truncate">{ORDER.publicPath}</span>
@@ -445,9 +441,9 @@ function ClientView({ statusLabel }: { statusLabel: string }): React.JSX.Element
       <p className="mt-5 font-[family-name:var(--home-font-display)] text-[length:var(--home-text-body,1rem)] font-semibold text-[var(--home-ink,#111215)]">
         {ORDER.client}
       </p>
-      <dl className="mt-4 grid gap-x-8 gap-y-4 border-t border-[var(--home-border,#D8D5CD)] pt-5 sm:grid-cols-2">
+      <dl className="mt-4 grid gap-x-8 gap-y-4 sm:grid-cols-2">
         {rows.map((row) => (
-          <div key={row.label} className="border-b border-[var(--home-border,#D8D5CD)]/50 pb-3 sm:border-b-0 sm:pb-0">
+          <div key={row.label}>
             <dt className="text-[length:var(--home-text-sm,0.875rem)] font-medium text-[var(--home-ink-muted,#4A4D55)]">
               {row.label}
             </dt>
@@ -462,7 +458,7 @@ function ClientView({ statusLabel }: { statusLabel: string }): React.JSX.Element
           </div>
         ))}
       </dl>
-      <p className="mt-6 border-t border-[var(--home-border,#D8D5CD)] pt-4 text-[length:var(--home-text-sm,0.875rem)] leading-[1.6] text-[var(--home-ink-muted,#4A4D55)]">
+      <p className="mt-6 rounded-lg bg-[var(--home-bg,#F6F5F1)] px-4 py-3 text-[length:var(--home-text-sm,0.875rem)] leading-[1.6] text-[var(--home-ink-muted,#4A4D55)]">
         Ovako klijent vidi nalog kad otvori javni link: bez prijave, bez cena i bez internih napomena.
       </p>
     </div>

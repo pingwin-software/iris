@@ -30,7 +30,7 @@ export function PricingPlans(): React.JSX.Element {
       <div
         role="group"
         aria-label="Način plaćanja"
-        className="inline-flex flex-wrap rounded-lg border border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface-recessed,#EEECE6)] p-1"
+        className="inline-flex flex-wrap rounded-lg bg-[var(--home-surface-recessed,#EEECE6)] p-1"
       >
         <BillingButton active={billing === "monthly"} onClick={() => setBilling("monthly")}>
           Mesečno
@@ -47,18 +47,18 @@ export function PricingPlans(): React.JSX.Element {
               as="div"
               delay={index * 80}
               className={cn(
-                "flex h-full w-full flex-col overflow-hidden rounded-xl bg-[var(--home-surface,#FFFFFF)]",
+                "flex h-full w-full flex-col overflow-hidden rounded-xl",
                 plan.highlighted
-                  ? "border border-[var(--home-border-strong,#B5B0A4)] shadow-[0_14px_36px_-16px_rgba(17,18,21,0.16)]"
-                  : "border border-[var(--home-border,#D8D5CD)]",
+                  ? "bg-[var(--home-surface,#FFFFFF)] shadow-[0_18px_48px_-16px_rgba(17,18,21,0.16)]"
+                  : "bg-[var(--home-bg,#F6F5F1)]",
               )}
             >
               <div
                 className={cn(
-                  "border-b px-6 py-5 sm:px-7 sm:py-6",
+                  "px-6 py-5 sm:px-7 sm:py-6",
                   plan.highlighted
-                    ? "border-[#111215] border-t-2 border-t-[var(--home-accent,#D4481D)] bg-[#111215] text-[#F2F2F4]"
-                    : "border-[var(--home-border,#D8D5CD)] border-t-2 border-t-transparent bg-[var(--home-surface,#FFFFFF)] text-[var(--home-ink,#111215)]",
+                    ? "bg-[#111215] text-[#F2F2F4]"
+                    : "text-[var(--home-ink,#111215)]",
                 )}
               >
                 <div className="flex items-baseline justify-between gap-3">
@@ -87,7 +87,7 @@ export function PricingPlans(): React.JSX.Element {
                 </p>
               </div>
 
-              <div className="flex flex-1 flex-col p-6 sm:p-7">
+              <div className="flex flex-1 flex-col p-6 pt-4 sm:p-7 sm:pt-5">
                 <div className="flex items-baseline gap-2" aria-live="polite">
                   <span
                     className="home-display text-[clamp(1.85rem,3vw,2.5rem)] font-bold leading-none tracking-[-0.03em] text-[var(--home-ink,#111215)] tnum"
@@ -102,7 +102,7 @@ export function PricingPlans(): React.JSX.Element {
                 <p className="mt-2 text-[length:var(--home-text-sm,0.875rem)] font-medium text-[var(--home-ink-muted,#4A4D55)] tnum">
                   Do {plan.users} korisnika
                 </p>
-                <ul className="mt-6 space-y-2.5 border-t border-[var(--home-border,#D8D5CD)] pt-5 text-[length:var(--home-text-body,1rem)] leading-[1.5] text-[var(--home-ink,#111215)]">
+                <ul className="mt-6 space-y-2.5 text-[length:var(--home-text-body,1rem)] leading-[1.5] text-[var(--home-ink,#111215)]">
                   {plan.includes.map((item) => (
                     <li key={item} className="flex items-start gap-2.5">
                       <Check
@@ -115,7 +115,14 @@ export function PricingPlans(): React.JSX.Element {
                   ))}
                 </ul>
                 <div className="mt-auto pt-8">
-                  <div className="flex items-baseline justify-between gap-3 border-t border-[var(--home-border,#D8D5CD)] pt-4 text-[length:var(--home-text-sm,0.875rem)]">
+                  <div
+                    className={cn(
+                      "flex items-baseline justify-between gap-3 rounded-lg px-4 py-3 text-[length:var(--home-text-sm,0.875rem)]",
+                      plan.highlighted
+                        ? "bg-[var(--home-bg,#F6F5F1)]"
+                        : "bg-[var(--home-surface-recessed,#EEECE6)]/80",
+                    )}
+                  >
                     <span className="text-[var(--home-ink-muted,#4A4D55)]">Uvođenje, jednokratno</span>
                     <span className="font-semibold text-[var(--home-ink,#111215)] tnum">
                       {formatRsd(plan.onboarding)}
@@ -140,7 +147,7 @@ export function PricingPlans(): React.JSX.Element {
         Preuzmite ceo cenovnik (PDF)
       </a>
 
-      <div className="mt-12 grid gap-8 border-t border-[var(--home-border,#D8D5CD)] pt-10 md:grid-cols-3">
+      <div className="mt-14 grid gap-8 md:grid-cols-3">
         <TermsColumn
           delay={0}
           title="Period usvajanja"
@@ -150,14 +157,14 @@ export function PricingPlans(): React.JSX.Element {
             <table className="w-full text-[length:var(--home-text-sm,0.875rem)]">
               <caption className="sr-only">Period usvajanja po paketu</caption>
               <thead>
-                <tr className="border-b border-[var(--home-border,#D8D5CD)] text-left text-[length:var(--home-text-sm,0.875rem)] text-[var(--home-ink-subtle,#646872)]">
-                  <th scope="col" className="pb-2.5 font-medium">
+                <tr className="text-left text-[length:var(--home-text-sm,0.875rem)] text-[var(--home-ink-subtle,#646872)]">
+                  <th scope="col" className="px-2.5 pb-2.5 font-medium">
                     Paket
                   </th>
-                  <th scope="col" className="pb-2.5 font-medium">
+                  <th scope="col" className="px-2.5 pb-2.5 font-medium">
                     Trajanje
                   </th>
-                  <th scope="col" className="pb-2.5 text-right font-medium">
+                  <th scope="col" className="px-2.5 pb-2.5 text-right font-medium">
                     Sati
                   </th>
                 </tr>
@@ -166,18 +173,18 @@ export function PricingPlans(): React.JSX.Element {
                 {ADOPTION.map((row) => (
                   <tr
                     key={row.plan}
-                    className="border-t border-[var(--home-border,#D8D5CD)] first:border-t-0"
+                    className="odd:bg-[var(--home-bg,#F6F5F1)]"
                   >
                     <th
                       scope="row"
-                      className="py-2 text-left font-medium text-[var(--home-ink,#111215)]"
+                      className="rounded-l-md px-2.5 py-2.5 text-left font-medium text-[var(--home-ink,#111215)]"
                     >
                       {row.plan}
                     </th>
-                    <td className="py-2 text-[var(--home-ink-muted,#4A4D55)] tnum">
+                    <td className="px-2.5 py-2.5 text-[var(--home-ink-muted,#4A4D55)] tnum">
                       {row.days} dana
                     </td>
-                    <td className="py-2 text-right font-medium text-[var(--home-ink,#111215)] tnum">
+                    <td className="rounded-r-md px-2.5 py-2.5 text-right font-medium text-[var(--home-ink,#111215)] tnum">
                       {row.hours} h
                     </td>
                   </tr>
@@ -207,11 +214,11 @@ export function PricingPlans(): React.JSX.Element {
           title="Dorade i usluge"
           lead="Za veće dorade dajemo fiksnu ponudu pre početka rada."
         >
-          <dl className="text-[length:var(--home-text-sm,0.875rem)]">
+          <dl className="space-y-1 text-[length:var(--home-text-sm,0.875rem)]">
             {CHANGE_POINTS.map((point) => (
               <div
                 key={point.label}
-                className="flex items-baseline justify-between gap-4 border-t border-[var(--home-border,#D8D5CD)] py-2 first:border-t-0"
+                className="flex items-baseline justify-between gap-4 rounded-md px-2.5 py-2 odd:bg-[var(--home-bg,#F6F5F1)]"
               >
                 <dt className="text-[var(--home-ink-muted,#4A4D55)]">{point.label}</dt>
                 <dd className="shrink-0 font-medium text-[var(--home-ink,#111215)] tnum">

@@ -346,7 +346,7 @@ function HomePage({ signedIn = false }: HomePageProps): React.JSX.Element {
           id="vrednost"
           tabIndex={-1}
           aria-labelledby="vrednost-title"
-          className="scroll-mt-20 border-t border-[var(--home-border)] bg-[var(--home-surface)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
+          className="scroll-mt-20 bg-[var(--home-surface)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
         >
           <div className="mx-auto max-w-7xl">
             <ScrollReveal
@@ -370,12 +370,12 @@ function HomePage({ signedIn = false }: HomePageProps): React.JSX.Element {
           </div>
         </section>
 
-        {/* #mogucnosti: #F6F5F1 stone band with shared-hairline architectural blueprint matrix */}
+        {/* #mogucnosti: #F6F5F1 stone band with open surface cards */}
         <section
           id="mogucnosti"
           tabIndex={-1}
           aria-labelledby="mogucnosti-title"
-          className="scroll-mt-20 border-t border-[var(--home-border)] bg-[var(--home-bg)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
+          className="scroll-mt-20 bg-[var(--home-bg)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
         >
           <div className="mx-auto max-w-7xl">
             <ScrollReveal as="div" variant="up">
@@ -400,7 +400,7 @@ function HomePage({ signedIn = false }: HomePageProps): React.JSX.Element {
           id="moduli"
           tabIndex={-1}
           aria-labelledby="moduli-title"
-          className="iris-home-carbon scroll-mt-20 border-t border-[var(--home-border)] bg-[var(--home-bg)] px-5 py-16 text-[var(--home-ink)] outline-none sm:px-8 sm:py-24 lg:px-10"
+          className="iris-home-carbon scroll-mt-20 bg-[var(--home-bg)] px-5 py-16 text-[var(--home-ink)] outline-none sm:px-8 sm:py-24 lg:px-10"
         >
           <div className="mx-auto max-w-7xl">
             <ScrollReveal as="div" variant="up">
@@ -425,7 +425,7 @@ function HomePage({ signedIn = false }: HomePageProps): React.JSX.Element {
           id="uloge"
           tabIndex={-1}
           aria-labelledby="uloge-title"
-          className="scroll-mt-20 border-t border-[var(--home-border)] bg-[var(--home-surface)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
+          className="scroll-mt-20 bg-[var(--home-surface)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
         >
           <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-12 lg:items-start lg:gap-12">
             <div className="lg:col-span-5">
@@ -437,14 +437,13 @@ function HomePage({ signedIn = false }: HomePageProps): React.JSX.Element {
                   Administrator vidi sve, operater ono što mu treba
                 </h2>
               </ScrollReveal>
-              <dl className="mt-8 space-y-7">
+              <dl className="mt-8 space-y-6">
                 {ROLES.map((item, index) => (
                   <ScrollReveal
                     key={item.title}
                     as="div"
                     delay={index * 90}
                     variant="up"
-                    className="iris-rule-draw pt-4"
                   >
                     <dt className="home-display text-[length:var(--home-text-body)] font-semibold tracking-[-0.015em] text-[var(--home-ink)]">
                       {item.title}
@@ -463,12 +462,12 @@ function HomePage({ signedIn = false }: HomePageProps): React.JSX.Element {
           </div>
         </section>
 
-        {/* #bezbednost: #F6F5F1 sticky asymmetric split with 2x2 shared-hairline matrix */}
+        {/* #bezbednost: #F6F5F1 sticky asymmetric split */}
         <section
           id="bezbednost"
           tabIndex={-1}
           aria-labelledby="bezbednost-title"
-          className="scroll-mt-20 border-t border-[var(--home-border)] bg-[var(--home-bg)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
+          className="scroll-mt-20 bg-[var(--home-bg)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
         >
           <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-12 lg:items-start lg:gap-12">
             <ScrollReveal as="div" variant="up" className="lg:sticky lg:top-24 lg:col-span-4">
@@ -493,7 +492,7 @@ function HomePage({ signedIn = false }: HomePageProps): React.JSX.Element {
           id="cenovnik"
           tabIndex={-1}
           aria-labelledby="cenovnik-title"
-          className="scroll-mt-20 border-t border-[var(--home-border)] bg-[var(--home-surface)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
+          className="scroll-mt-20 bg-[var(--home-surface)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
         >
           <div className="mx-auto max-w-7xl">
             <ScrollReveal as="div" variant="up">
@@ -518,7 +517,7 @@ function HomePage({ signedIn = false }: HomePageProps): React.JSX.Element {
           id="pocetak"
           tabIndex={-1}
           aria-labelledby="pocetak-title"
-          className="scroll-mt-20 border-t border-[var(--home-border)] bg-[var(--home-bg)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
+          className="scroll-mt-20 bg-[var(--home-bg)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
         >
           <div className="mx-auto max-w-7xl">
             <ScrollReveal as="div" variant="up">
@@ -540,7 +539,7 @@ function HomePage({ signedIn = false }: HomePageProps): React.JSX.Element {
           id="pitanja"
           tabIndex={-1}
           aria-labelledby="pitanja-title"
-          className="scroll-mt-20 border-t border-[var(--home-border)] bg-[var(--home-surface)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
+          className="scroll-mt-20 bg-[var(--home-surface)] px-5 py-16 outline-none sm:px-8 sm:py-24 lg:px-10"
         >
           <div className="mx-auto max-w-7xl lg:grid lg:grid-cols-12 lg:items-start lg:gap-12">
             <ScrollReveal as="div" variant="up" className="lg:sticky lg:top-24 lg:col-span-5">
@@ -558,7 +557,7 @@ function HomePage({ signedIn = false }: HomePageProps): React.JSX.Element {
         </section>
 
         {/* Unified dark carbon closing stage: Closing CTA + Footer */}
-        <div className="iris-home-carbon border-t border-[var(--home-border)] bg-[var(--home-bg)] text-[var(--home-ink)]">
+        <div className="iris-home-carbon bg-[var(--home-bg)] text-[var(--home-ink)]">
           <ClosingCta primaryHref={primaryHref} primaryLabel={primaryLabel} />
           <Footer
             primaryHref={primaryHref}
@@ -683,10 +682,10 @@ function TopBar({
     <>
       <header
         className={cn(
-          "iris-home-header fixed inset-x-0 top-0 z-40 border-b",
+          "iris-home-header fixed inset-x-0 top-0 z-40",
           scrolled
-            ? "border-[var(--home-border)] bg-[#F6F5F1]/92 shadow-[0_1px_12px_rgba(17,18,21,0.05)] backdrop-blur-md"
-            : "border-transparent bg-transparent",
+            ? "bg-[#F6F5F1]/92 shadow-[0_1px_16px_rgba(17,18,21,0.06)] backdrop-blur-md"
+            : "bg-transparent",
         )}
       >
         <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between gap-4 px-5 sm:px-8 lg:px-10">
@@ -735,13 +734,6 @@ function TopBar({
             </button>
           </div>
         </div>
-        <div
-          aria-hidden="true"
-          className={cn(
-            "iris-home-scroll-progress pointer-events-none absolute inset-x-0 -bottom-px h-[2px]",
-            scrolled ? "opacity-100" : "opacity-0",
-          )}
-        />
       </header>
 
       <dialog
@@ -757,7 +749,7 @@ function TopBar({
         }}
       >
         <div ref={sheetRef} className="iris-home-drawer-sheet">
-          <div className="flex items-center justify-between border-b border-[var(--home-border)] px-5 py-3.5">
+          <div className="flex items-center justify-between px-5 py-3.5">
             <a
               href="#sadrzaj"
               onClick={(event) => scrollToSection(event, "sadrzaj", true)}
@@ -798,12 +790,10 @@ function TopBar({
               );
             })}
 
-            <div className="my-2 border-t border-[var(--home-border)]" />
-
             <Link
               to={REGULATIONS_BASE_PATH}
               onClick={handleDrawerLinkClick}
-              className="iris-focusable flex min-h-[44px] items-center rounded-lg px-3 py-2 text-[length:var(--home-text-body)] font-medium text-[var(--home-ink-muted)] transition-[color,background-color] duration-150 hover:bg-[var(--home-surface-recessed)] hover:text-[var(--home-ink)]"
+              className="iris-focusable mt-3 flex min-h-[44px] items-center rounded-lg px-3 py-2 text-[length:var(--home-text-body)] font-medium text-[var(--home-ink-muted)] transition-[color,background-color] duration-150 hover:bg-[var(--home-surface-recessed)] hover:text-[var(--home-ink)]"
             >
               Propisi
             </Link>
@@ -828,7 +818,6 @@ function TopBar({
 function Hero({ primaryHref, primaryLabel }: { primaryHref: string; primaryLabel: string }): React.JSX.Element {
   return (
     <section className="relative overflow-hidden bg-[var(--home-bg)] px-5 pb-14 pt-24 sm:px-8 sm:pb-20 sm:pt-32 lg:px-10">
-      <div aria-hidden className="iris-home-grid-bg pointer-events-none absolute inset-x-0 top-0 h-[44rem]" />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-[38rem]"
@@ -868,12 +857,12 @@ function PointGrid({ points, columns }: { points: Feature[]; columns: "two" | "t
   return (
     <ul
       className={cn(
-        "grid border-t border-l border-[var(--home-border)] bg-[var(--home-surface)] sm:grid-cols-2",
+        "grid gap-5 sm:grid-cols-2",
         columns === "three" && "lg:grid-cols-3",
       )}
     >
       {points.map((point, index) => (
-        <FeatureCard key={point.title} feature={point} index={index} variant="cell" />
+        <FeatureCard key={point.title} feature={point} index={index} variant="card" />
       ))}
     </ul>
   );
@@ -885,8 +874,8 @@ function PointGrid({ points, columns }: { points: Feature[]; columns: "two" | "t
  */
 function RoleVisibilitySpecimen(): React.JSX.Element {
   return (
-    <div className="overflow-hidden rounded-xl border border-[var(--home-border)] bg-[var(--home-bg)]">
-      <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-[var(--home-border)] bg-[var(--home-surface-recessed)] px-5 py-3.5 sm:px-6">
+    <div className="overflow-hidden rounded-2xl bg-[var(--home-bg)] shadow-[0_12px_36px_-18px_rgba(17,18,21,0.10)]">
+      <div className="flex flex-wrap items-baseline justify-between gap-3 bg-[var(--home-surface-recessed)]/70 px-5 py-3.5 sm:px-6">
         <span className="text-[length:var(--home-text-sm)] font-medium text-[var(--home-ink-muted)]">
           Primer stavke naloga
         </span>
@@ -895,7 +884,7 @@ function RoleVisibilitySpecimen(): React.JSX.Element {
         </span>
       </div>
 
-      <div className="divide-y divide-[var(--home-border)]">
+      <div>
         <div className="bg-[var(--home-surface)] px-5 py-5 sm:px-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-[length:var(--home-text-body)] font-semibold text-[var(--home-ink)]">
@@ -906,7 +895,7 @@ function RoleVisibilitySpecimen(): React.JSX.Element {
               Pun finansijski uvid
             </span>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-4 border-t border-[var(--iris-border-soft)] pt-4 sm:grid-cols-4">
+          <div className="mt-4 grid grid-cols-2 gap-4 pt-2 sm:grid-cols-4">
             <div>
               <div className="text-[length:var(--home-text-sm)] text-[var(--home-ink-subtle)]">Prodajna</div>
               <div className="mt-0.5 text-[length:var(--home-text-body)] font-semibold text-[var(--home-ink)] tnum">
@@ -945,14 +934,14 @@ function RoleVisibilitySpecimen(): React.JSX.Element {
               Samo prodajna cena
             </span>
           </div>
-          <div className="mt-4 grid gap-4 border-t border-[var(--home-border)] pt-4 sm:grid-cols-12 sm:items-center">
+          <div className="mt-4 grid gap-4 pt-2 sm:grid-cols-12 sm:items-center">
             <div className="sm:col-span-4">
               <div className="text-[length:var(--home-text-sm)] text-[var(--home-ink-subtle)]">Prodajna</div>
               <div className="mt-0.5 text-[length:var(--home-text-body)] font-semibold text-[var(--home-ink)] tnum">
                 6.500 RSD
               </div>
             </div>
-            <div className="flex items-center gap-2.5 rounded-lg border border-dashed border-[var(--home-border-strong)] bg-[var(--home-surface-recessed)] px-3.5 py-2.5 text-[length:var(--home-text-sm)] text-[var(--home-ink-muted)] sm:col-span-8">
+            <div className="flex items-center gap-2.5 rounded-lg bg-[var(--home-surface-recessed)] px-3.5 py-2.5 text-[length:var(--home-text-sm)] text-[var(--home-ink-muted)] sm:col-span-8">
               <Lock aria-hidden className="h-4 w-4 shrink-0 text-[var(--home-ink-subtle)]" />
               <span>Nabavna i marža nisu u odgovoru servera</span>
             </div>
@@ -975,13 +964,7 @@ function OnboardingSteps(): React.JSX.Element {
             variant="up"
             className="relative flex gap-4 md:block"
           >
-            {index < START_STEPS.length - 1 ? (
-              <span
-                aria-hidden
-                className="pointer-events-none absolute left-11 -right-8 top-[1.125rem] hidden h-px bg-[var(--home-border)] md:block"
-              />
-            ) : null}
-            <div className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--home-border-strong)] bg-[var(--home-surface)] text-[length:var(--home-text-sm)] font-semibold text-[var(--home-ink)] tnum">
+            <div className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--home-surface)] text-[length:var(--home-text-sm)] font-semibold text-[var(--home-ink)] shadow-[0_1px_3px_rgba(17,18,21,0.08)] tnum">
               {index + 1}
             </div>
             <div className="md:mt-5">
@@ -1000,7 +983,7 @@ function OnboardingSteps(): React.JSX.Element {
         as="div"
         delay={120}
         variant="up"
-        className="mt-12 flex flex-col items-start gap-5 rounded-xl border border-[var(--home-border)] bg-[var(--home-surface)] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8"
+        className="mt-12 flex flex-col items-start gap-5 rounded-xl bg-[var(--home-surface)] p-6 shadow-[0_2px_14px_-6px_rgba(17,18,21,0.07)] sm:flex-row sm:items-center sm:justify-between sm:p-8"
       >
         <div>
           <p className="home-display text-[length:var(--home-text-body)] font-semibold tracking-[-0.015em] text-[var(--home-ink)]">
@@ -1054,7 +1037,7 @@ function Footer({
   onNavigateSection: SectionClickHandler;
 }): React.JSX.Element {
   return (
-    <footer className="border-t border-[var(--home-border)] px-5 py-12 sm:px-8 lg:px-10">
+    <footer className="bg-[#101216] px-5 py-12 sm:px-8 lg:px-10">
       <div className="mx-auto flex max-w-7xl flex-col justify-between gap-10 md:flex-row md:items-start">
         <div className="max-w-xs">
           <div className="flex items-center gap-2.5 text-[var(--home-ink)]">

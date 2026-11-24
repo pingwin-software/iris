@@ -135,16 +135,7 @@
   --iris-proc-byproduct: var(--home-ink-subtle);
 }
 
-/* Architectural registration-grid pattern behind hero from y = 0 */
-.iris-home-grid-bg {
-  background-image:
-    linear-gradient(to right, rgba(17, 18, 21, 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(17, 18, 21, 0.045) 1px, transparent 1px);
-  background-size: 48px 48px;
-  background-position: top center;
-  mask-image: radial-gradient(ellipse 92% 82% at 50% 8%, #000 32%, transparent 90%);
-  -webkit-mask-image: radial-gradient(ellipse 92% 82% at 50% 8%, #000 32%, transparent 90%);
-}
+/* Architectural typography scale & helpers */
 
 .iris-home-theme .tnum,
 .iris-home-theme [data-tnum] {
@@ -276,7 +267,6 @@
   max-block-size: 100dvh;
   overflow-y: auto;
   overscroll-behavior: contain;
-  border-inline-start: 1px solid var(--home-border, #D8D5CD);
   box-shadow: -16px 0 48px -12px rgba(17, 18, 21, 0.18);
   display: flex;
   flex-direction: column;
@@ -353,25 +343,7 @@
   }
 }
 
-/* Scroll-driven header progress hairline & scroll-reveal entrances */
-.iris-home-scroll-progress {
-  display: none;
-}
-
-.iris-rule-draw {
-  position: relative;
-}
-
-.iris-rule-draw::before {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  inset-block-start: 0;
-  block-size: 2px;
-  background-color: var(--home-accent, #D4481D);
-  transform-origin: left center;
-}
-
+/* Scroll-reveal entrances */
 @media (prefers-reduced-motion: no-preference) {
   html:has(.iris-home-theme),
   html[data-iris-document-scroll="true"] {
@@ -405,51 +377,10 @@
     opacity: 1;
     transform: none;
   }
-
-  .iris-rule-draw::before {
-    transition-property: transform;
-    transition-duration: 560ms;
-    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: calc(var(--reveal-delay, 0ms) + 80ms);
-  }
-
-  .iris-reveal[data-reveal="hidden"].iris-rule-draw::before,
-  .iris-reveal[data-reveal="hidden"] .iris-rule-draw::before {
-    transform: scaleX(0);
-  }
-
-  .iris-reveal[data-reveal="shown"].iris-rule-draw::before,
-  .iris-reveal[data-reveal="shown"] .iris-rule-draw::before {
-    transform: scaleX(1);
-  }
-
-  @supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
-    @keyframes iris-home-scroll-progress-grow {
-      from {
-        transform: scaleX(0);
-      }
-      to {
-        transform: scaleX(1);
-      }
-    }
-
-    .iris-home-scroll-progress {
-      display: block;
-      background-color: var(--home-accent, #D4481D);
-      transform-origin: 0 50%;
-      transition-property: opacity;
-      transition-duration: 200ms;
-      transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-      animation: iris-home-scroll-progress-grow auto linear both;
-      animation-timeline: scroll(root block);
-      animation-range: 0% 100%;
-    }
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .iris-home-header,
-  .iris-home-scroll-progress,
   .iris-home-nav-link,
   .iris-home-nav-link::after,
   .iris-home-btn,
@@ -457,9 +388,7 @@
   .iris-home-drawer::backdrop,
   .iris-home-drawer-sheet,
   .iris-home-faq details::details-content,
-  .iris-reveal,
-  .iris-rule-draw,
-  .iris-rule-draw::before {
+  .iris-reveal {
     transition: none !important;
     animation: none !important;
   }

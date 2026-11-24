@@ -117,7 +117,7 @@ export function ValueShowcase(): React.JSX.Element {
           <ProductionPanel />
         </ScrollReveal>
       </div>
-      <ul className="mt-6 grid grid-cols-1 border-t border-l border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface,#FFFFFF)] sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {MORE_WINS.map((win, index) => (
           <FeatureCard key={win.title} feature={win} index={index} variant="cell" />
         ))}
@@ -154,12 +154,12 @@ function ProfitPanel(): React.JSX.Element {
       <ul
         ref={listRef}
         aria-label={PROFIT_VIEWS[view].label}
-        className="divide-y divide-[var(--home-border,#D8D5CD)]/50"
+        className="space-y-4"
       >
         {rows.map((row) => {
           const margin = (row.profit / row.revenue) * 100;
           return (
-            <li key={row.name} className="py-3 first:pt-0 last:pb-0">
+            <li key={row.name}>
               <div className="flex items-baseline justify-between gap-3 text-[length:var(--home-text-sm,0.875rem)]">
                 <span className="truncate font-medium text-[var(--home-ink,#111215)]">{row.name}</span>
                 <span
@@ -175,7 +175,7 @@ function ProfitPanel(): React.JSX.Element {
               </div>
               <div
                 aria-hidden
-                className="mt-2 h-3 overflow-hidden rounded-[4px] border border-[var(--home-border,#D8D5CD)]/70 bg-[var(--home-surface-recessed,#EEECE6)]"
+                className="mt-2 h-3 overflow-hidden rounded-[4px] bg-[var(--home-surface-recessed,#EEECE6)]"
               >
                 <div
                   className="relative h-full rounded-[3px] bg-[var(--home-border-strong,#B5B0A4)]/60 transition-[width] duration-500 ease-out motion-reduce:transition-none"
@@ -221,8 +221,7 @@ function ProductionPanel(): React.JSX.Element {
       legend={[
         {
           label: legend[0],
-          swatch:
-            "rounded-[2px] border border-[var(--home-border-strong,#B5B0A4)] bg-[var(--home-surface-recessed,#EEECE6)]",
+          swatch: "rounded-[2px] bg-[var(--home-border-strong,#B5B0A4)]/55",
         },
         { label: legend[1], swatch: "rounded-[2px] bg-[color:var(--iris-proc-step,#2563EB)]" },
       ]}
@@ -232,7 +231,7 @@ function ProductionPanel(): React.JSX.Element {
       <ul
         ref={listRef}
         aria-label={PRODUCTION_VIEWS[view].label}
-        className="divide-y divide-[var(--home-border,#D8D5CD)]/50"
+        className="space-y-4"
       >
         {rows.map((row) => {
           const { reference, measured } = row;
@@ -243,7 +242,7 @@ function ProductionPanel(): React.JSX.Element {
               ? `${measured} min umesto ${reference}`
               : `${formatPercent((measured / reference) * 100)} smene`;
           return (
-            <li key={row.label} className="py-3 first:pt-0 last:pb-0">
+            <li key={row.label}>
               <div className="flex items-baseline justify-between gap-3 text-[length:var(--home-text-sm,0.875rem)]">
                 <span className="truncate font-medium text-[var(--home-ink,#111215)]">{row.label}</span>
                 <span
@@ -261,7 +260,7 @@ function ProductionPanel(): React.JSX.Element {
               </div>
               <div aria-hidden className="relative mt-2 h-3.5">
                 <div
-                  className="absolute inset-y-0 left-0 rounded-[4px] border border-[var(--home-border-strong,#B5B0A4)] bg-[var(--home-surface-recessed,#EEECE6)] transition-[width] duration-500 ease-out motion-reduce:transition-none"
+                  className="absolute inset-y-0 left-0 rounded-[4px] bg-[var(--home-border-strong,#B5B0A4)]/45 transition-[width] duration-500 ease-out motion-reduce:transition-none"
                   style={{ width: inView ? `${(reference / max) * 100}%` : "0%" }}
                 />
                 <div
@@ -300,14 +299,14 @@ function Panel({
   children: ReactNode;
 }): React.JSX.Element {
   return (
-    <article className="flex h-full w-full flex-col rounded-xl border border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface,#FFFFFF)] p-6 sm:p-8">
+    <article className="flex h-full w-full flex-col rounded-xl bg-[var(--home-bg,#F6F5F1)] p-6 sm:p-8">
       <h3 className="text-balance font-[family-name:var(--home-font-display)] text-[length:var(--home-text-body,1rem)] font-semibold tracking-[-0.015em] text-[var(--home-ink,#111215)]">
         {title}
       </h3>
       <p className="mt-2 text-pretty text-[length:var(--home-text-body,1rem)] leading-[1.6] text-[var(--home-ink-muted,#4A4D55)]">
         {body}
       </p>
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--home-border,#D8D5CD)] pb-4">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         {toggle}
         <div aria-hidden className="flex flex-wrap gap-3 text-[length:var(--home-text-sm,0.875rem)] text-[var(--home-ink-muted,#4A4D55)]">
           {legend.map((item) => (
@@ -318,10 +317,16 @@ function Panel({
           ))}
         </div>
       </div>
-      <div className="mt-5">{children}</div>
-      <p className="mt-6 border-l-2 border-[var(--home-accent,#D4481D)] bg-[var(--home-surface-recessed,#EEECE6)]/50 py-2 pl-3.5 pr-3 text-[length:var(--home-text-sm,0.875rem)] font-medium leading-[1.55] text-[var(--home-ink,#111215)]">
-        {insight}
-      </p>
+      <div className="mt-6">{children}</div>
+      <div className="mt-6 flex items-start gap-2.5 rounded-lg bg-[var(--home-surface,#FFFFFF)] px-4 py-3">
+        <span
+          aria-hidden
+          className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--home-accent,#D4481D)]"
+        />
+        <p className="text-[length:var(--home-text-sm,0.875rem)] font-medium leading-[1.55] text-[var(--home-ink,#111215)]">
+          {insight}
+        </p>
+      </div>
       {note ? (
         <p className="mt-auto pt-4 text-[length:var(--home-text-sm,0.875rem)] text-[var(--home-ink-muted,#4A4D55)]">
           {note}
@@ -346,7 +351,7 @@ function Toggle<K extends string>({
     <div
       role="group"
       aria-label={label}
-      className="inline-flex flex-wrap rounded-lg border border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface-recessed,#EEECE6)] p-1 text-[length:var(--home-text-sm,0.875rem)]"
+      className="inline-flex flex-wrap rounded-lg bg-[var(--home-surface-recessed,#EEECE6)] p-1 text-[length:var(--home-text-sm,0.875rem)]"
     >
       {(Object.keys(options) as K[]).map((key) => {
         const active = value === key;
