@@ -1,0 +1,466 @@
+/*
+ * Precision Shopcraft & Carbon Ink theme and interactive styles scoped to /home.
+ * Keeps the main app's warm-ivory/dark theme untouched while giving HomePage
+ * and its sections/SVG scenes warm limestone light and carbon dark tokens.
+ */
+
+/* Ensure font-scale wrapper never traps document scroll or fixed headers on /home */
+[data-iris-scale-root]:has(.iris-home-theme) {
+  transform: none !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.iris-home-theme,
+.dark .iris-home-theme {
+  color-scheme: only light;
+
+  --home-bg: #F6F5F1;
+  --home-surface: #FFFFFF;
+  --home-surface-recessed: #EEECE6;
+  --home-ink: #111215;
+  --home-ink-muted: #4A4D55;
+  --home-ink-subtle: #646872;
+  --home-border: #D8D5CD;
+  --home-border-strong: #B5B0A4;
+  --home-accent: #D4481D;
+  --home-accent-ink: #A93511;
+
+  --home-font-display: "Bricolage Grotesque", "IBM Plex Sans", system-ui, sans-serif;
+  --home-font-body: "IBM Plex Sans", system-ui, sans-serif;
+
+  /* Strictly 3 body font-size steps below the hero display and wordmark */
+  --home-text-heading: clamp(1.75rem, 3vw, 2.5rem);
+  --home-text-body: 1rem;
+  --home-text-sm: 0.875rem;
+
+  background-color: var(--home-bg);
+  color: var(--home-ink);
+  accent-color: var(--home-accent);
+  font-family: var(--home-font-body);
+  font-feature-settings: normal;
+
+  /* Core tokens consumed by Tailwind utilities and FeatureScene SVGs */
+  --background: var(--home-bg);
+  --foreground: var(--home-ink);
+  --card: var(--home-surface);
+  --card-foreground: var(--home-ink);
+  --popover: var(--home-surface);
+  --popover-foreground: var(--home-ink);
+  --primary: var(--home-ink);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--home-surface-recessed);
+  --secondary-foreground: var(--home-ink);
+  --muted: var(--home-surface-recessed);
+  --muted-foreground: var(--home-ink-muted);
+  --accent: var(--home-surface-recessed);
+  --accent-foreground: var(--home-ink);
+  --destructive: #C82828;
+  --destructive-foreground: #FFFFFF;
+  --border: var(--home-border);
+  --input: var(--home-border);
+  --ring: var(--home-accent);
+
+  --iris-accent: var(--home-accent);
+  --iris-border: var(--home-border);
+  --iris-border-soft: #E5E2DA;
+  --iris-ink-soft: var(--home-ink-muted);
+  --iris-ink-mute: var(--home-ink-subtle);
+  --iris-ink-faint: #B5B0A4;
+  --iris-status-done: #15803D;
+  --iris-status-active: #B45309;
+  --iris-status-draft: #4A4D55;
+  --iris-status-cancelled: #C82828;
+  --iris-proc-step: #2563EB;
+  --iris-proc-input: #059669;
+  --iris-proc-product: var(--home-accent);
+  --iris-proc-byproduct: var(--home-ink-subtle);
+}
+
+/* Full-bleed dark carbon workbench stage */
+.iris-home-theme .iris-home-carbon,
+.dark .iris-home-theme .iris-home-carbon,
+.iris-home-carbon {
+  color-scheme: only dark;
+
+  --home-bg: #0B0C0E;
+  --home-surface: #121418;
+  --home-surface-recessed: #191C22;
+  --home-ink: #F2F2F4;
+  --home-ink-muted: #A6AAB5;
+  --home-ink-subtle: #7E8390;
+  --home-border: #262932;
+  --home-border-strong: #3A3F4D;
+  --home-accent: #E85A2D;
+  --home-accent-ink: #FF7A4D;
+
+  background-color: var(--home-bg);
+  color: var(--home-ink);
+  accent-color: var(--home-accent);
+
+  --background: var(--home-bg);
+  --foreground: var(--home-ink);
+  --card: var(--home-surface);
+  --card-foreground: var(--home-ink);
+  --popover: var(--home-surface);
+  --popover-foreground: var(--home-ink);
+  --primary: var(--home-ink);
+  --primary-foreground: #0B0C0E;
+  --secondary: var(--home-surface-recessed);
+  --secondary-foreground: var(--home-ink);
+  --muted: var(--home-surface-recessed);
+  --muted-foreground: var(--home-ink-muted);
+  --accent: var(--home-surface-recessed);
+  --accent-foreground: var(--home-ink);
+  --destructive: #EF7878;
+  --destructive-foreground: #0B0C0E;
+  --border: var(--home-border);
+  --input: var(--home-border);
+  --ring: var(--home-accent);
+
+  --iris-accent: var(--home-accent);
+  --iris-border: var(--home-border);
+  --iris-border-soft: #1F222A;
+  --iris-ink-soft: var(--home-ink-muted);
+  --iris-ink-mute: var(--home-ink-subtle);
+  --iris-ink-faint: #464B59;
+  --iris-status-done: #52C48A;
+  --iris-status-active: #E0A458;
+  --iris-status-draft: var(--home-ink-muted);
+  --iris-status-cancelled: #EF7878;
+  --iris-proc-step: #60A5FA;
+  --iris-proc-input: #34D399;
+  --iris-proc-product: var(--home-accent);
+  --iris-proc-byproduct: var(--home-ink-subtle);
+}
+
+/* Architectural registration-grid pattern behind hero from y = 0 */
+.iris-home-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(17, 18, 21, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 18, 21, 0.045) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: top center;
+  mask-image: radial-gradient(ellipse 92% 82% at 50% 8%, #000 32%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse 92% 82% at 50% 8%, #000 32%, transparent 90%);
+}
+
+.iris-home-theme .tnum,
+.iris-home-theme [data-tnum] {
+  font-variant-numeric: tabular-nums;
+}
+
+.iris-home-theme .home-display,
+.iris-home-theme .home-wordmark,
+.iris-home-theme .home-hero-title,
+.iris-home-theme .home-heading,
+.iris-home-theme h1,
+.iris-home-theme h2,
+.iris-home-theme h3 {
+  font-family: var(--home-font-display);
+}
+
+.iris-home-theme .home-hero-title {
+  font-size: clamp(2.85rem, 6.2vw, 5.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.038em;
+  text-wrap: balance;
+}
+
+.iris-home-theme .home-heading {
+  font-size: var(--home-text-heading);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+/* Crisp accessible focus ring that preserves element border-radius */
+.iris-home-theme .iris-focusable:focus-visible {
+  outline: 2px solid var(--home-accent);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* Sticky/fixed top bar transition (explicit properties only) */
+.iris-home-header {
+  transition-property: background-color, border-color, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Single-line desktop scrollspy link with non-color underline indicator */
+.iris-home-nav-link {
+  position: relative;
+  transition-property: color;
+  transition-duration: 160ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.iris-home-nav-link::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -0.3125rem;
+  block-size: 2px;
+  border-radius: 9999px;
+  background-color: var(--home-accent, #D4481D);
+  transform: scaleX(0);
+  transform-origin: center;
+  opacity: 0;
+  transition-property: transform, opacity;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.iris-home-nav-link[aria-current="location"] {
+  color: var(--home-ink, #111215);
+}
+
+.iris-home-nav-link[aria-current="location"]::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+@media (forced-colors: active) {
+  .iris-home-nav-link[aria-current="location"]::after {
+    background-color: Highlight;
+  }
+}
+
+.iris-home-btn {
+  transition-property: background-color, border-color, color, transform, box-shadow;
+  transition-duration: 160ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Native <dialog> mobile navigation drawer */
+.iris-home-drawer {
+  color-scheme: only light;
+  color: var(--home-ink, #111215);
+  position: fixed;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: none;
+  max-block-size: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.iris-home-drawer:not([open]) {
+  display: none;
+}
+
+.iris-home-drawer[open] {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.iris-home-drawer::backdrop {
+  background-color: rgba(17, 18, 21, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.iris-home-drawer-sheet {
+  color-scheme: only light;
+  background-color: var(--home-surface, #FFFFFF);
+  color: var(--home-ink, #111215);
+  font-family: var(--home-font-body);
+  inline-size: min(22rem, 88dvw);
+  block-size: 100dvh;
+  max-block-size: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-inline-start: 1px solid var(--home-border, #D8D5CD);
+  box-shadow: -16px 0 48px -12px rgba(17, 18, 21, 0.18);
+  display: flex;
+  flex-direction: column;
+}
+
+.iris-home-drawer .iris-focusable:focus-visible {
+  outline: 2px solid var(--home-accent, #D4481D);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .iris-home-drawer {
+    transition-property: display, overlay;
+    transition-duration: 220ms;
+    transition-behavior: allow-discrete;
+  }
+
+  .iris-home-drawer::backdrop {
+    opacity: 0;
+    transition-property: opacity, display, overlay;
+    transition-duration: 220ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    transition-behavior: allow-discrete;
+  }
+
+  .iris-home-drawer[open]::backdrop {
+    opacity: 1;
+  }
+
+  .iris-home-drawer-sheet {
+    transform: translateX(100%);
+    transition-property: transform;
+    transition-duration: 220ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .iris-home-drawer[open] .iris-home-drawer-sheet {
+    transform: translateX(0);
+  }
+}
+
+@starting-style {
+  .iris-home-drawer[open]::backdrop {
+    opacity: 0;
+  }
+
+  .iris-home-drawer[open] .iris-home-drawer-sheet {
+    transform: translateX(100%);
+  }
+}
+
+/* Smooth intrinsic-size FAQ disclosures (<details>::details-content) */
+.iris-home-faq details::details-content {
+  interpolate-size: allow-keywords;
+  overflow: clip;
+  contain: layout;
+}
+
+.iris-home-faq details:not([open])::details-content {
+  block-size: 0;
+}
+
+.iris-home-faq details[open]::details-content {
+  block-size: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .iris-home-faq details::details-content {
+    transition-property: block-size, content-visibility, display;
+    transition-duration: 240ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    transition-behavior: allow-discrete;
+  }
+}
+
+/* Scroll-driven header progress hairline & scroll-reveal entrances */
+.iris-home-scroll-progress {
+  display: none;
+}
+
+.iris-rule-draw {
+  position: relative;
+}
+
+.iris-rule-draw::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 2px;
+  background-color: var(--home-accent, #D4481D);
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.iris-home-theme),
+  html[data-iris-document-scroll="true"] {
+    scroll-behavior: smooth;
+  }
+
+  .iris-reveal {
+    transition-property: opacity, transform;
+    transition-duration: 520ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .iris-reveal[data-reveal="hidden"] {
+    opacity: 0;
+  }
+
+  .iris-reveal[data-reveal="hidden"][data-reveal-variant="up"] {
+    transform: translate3d(0, 16px, 0);
+  }
+
+  .iris-reveal[data-reveal="hidden"][data-reveal-variant="scale"] {
+    transform: scale(0.97);
+  }
+
+  .iris-reveal[data-reveal="hidden"][data-reveal-variant="fade"] {
+    transform: none;
+  }
+
+  .iris-reveal[data-reveal="shown"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .iris-rule-draw::before {
+    transition-property: transform;
+    transition-duration: 560ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--reveal-delay, 0ms) + 80ms);
+  }
+
+  .iris-reveal[data-reveal="hidden"].iris-rule-draw::before,
+  .iris-reveal[data-reveal="hidden"] .iris-rule-draw::before {
+    transform: scaleX(0);
+  }
+
+  .iris-reveal[data-reveal="shown"].iris-rule-draw::before,
+  .iris-reveal[data-reveal="shown"] .iris-rule-draw::before {
+    transform: scaleX(1);
+  }
+
+  @supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
+    @keyframes iris-home-scroll-progress-grow {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    .iris-home-scroll-progress {
+      display: block;
+      background-color: var(--home-accent, #D4481D);
+      transform-origin: 0 50%;
+      transition-property: opacity;
+      transition-duration: 200ms;
+      transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      animation: iris-home-scroll-progress-grow auto linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0% 100%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iris-home-header,
+  .iris-home-scroll-progress,
+  .iris-home-nav-link,
+  .iris-home-nav-link::after,
+  .iris-home-btn,
+  .iris-home-drawer,
+  .iris-home-drawer::backdrop,
+  .iris-home-drawer-sheet,
+  .iris-home-faq details::details-content,
+  .iris-reveal,
+  .iris-rule-draw,
+  .iris-rule-draw::before {
+    transition: none !important;
+    animation: none !important;
+  }
+}

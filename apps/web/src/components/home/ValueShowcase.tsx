@@ -1,6 +1,7 @@
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { FeatureCard, type Feature } from "@/components/home/FeatureScene";
+import { ScrollReveal, useInViewOnce } from "./ScrollReveal";
 import { formatPercent, formatWhole } from "@/lib/home/format";
 
 /**
@@ -108,13 +109,17 @@ const MORE_WINS: Feature[] = [
 export function ValueShowcase(): React.JSX.Element {
   return (
     <div>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <ProfitPanel />
-        <ProductionPanel />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ScrollReveal as="div" delay={0} className="flex">
+          <ProfitPanel />
+        </ScrollReveal>
+        <ScrollReveal as="div" delay={90} className="flex">
+          <ProductionPanel />
+        </ScrollReveal>
       </div>
-      <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="mt-6 grid grid-cols-1 border-t border-l border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface,#FFFFFF)] sm:grid-cols-2 lg:grid-cols-4">
         {MORE_WINS.map((win, index) => (
-          <FeatureCard key={win.title} feature={win} index={index} />
+          <FeatureCard key={win.title} feature={win} index={index} variant="cell" />
         ))}
       </ul>
     </div>
@@ -123,12 +128,13 @@ export function ValueShowcase(): React.JSX.Element {
 
 function ProfitPanel(): React.JSX.Element {
   const [view, setView] = useState<keyof typeof PROFIT_VIEWS>("client");
+  const listRef = useRef<HTMLUListElement>(null);
+  const inView = useInViewOnce(listRef);
   const { rows, insight } = PROFIT_VIEWS[view];
   const maxRevenue = Math.max(...rows.map((row) => row.revenue));
 
   return (
     <Panel
-      kicker="Novac"
       title="Ko i šta Vam donosi zaradu"
       body="Iris od svakog naloga računa zaradu i maržu, pa vidite koji klijenti i artikli Vas hrane, a koji samo prave promet."
       toggle={
@@ -140,39 +146,48 @@ function ProfitPanel(): React.JSX.Element {
         />
       }
       legend={[
-        { label: "Promet", swatch: "bg-[color:var(--iris-border-soft)]" },
-        { label: "Zarada", swatch: "bg-[color:var(--iris-accent)]" },
+        { label: "Promet", swatch: "rounded-[2px] bg-[var(--home-border-strong,#B5B0A4)]/65" },
+        { label: "Zarada", swatch: "rounded-[2px] bg-[var(--home-accent,#D4481D)]" },
       ]}
       insight={insight}
     >
-      <ul aria-label={PROFIT_VIEWS[view].label} className="space-y-4">
+      <ul
+        ref={listRef}
+        aria-label={PROFIT_VIEWS[view].label}
+        className="divide-y divide-[var(--home-border,#D8D5CD)]/50"
+      >
         {rows.map((row) => {
           const margin = (row.profit / row.revenue) * 100;
           return (
-            <li key={row.name}>
-              <div className="flex items-baseline justify-between gap-3 text-[13px]">
-                <span className="truncate">{row.name}</span>
+            <li key={row.name} className="py-3 first:pt-0 last:pb-0">
+              <div className="flex items-baseline justify-between gap-3 text-[length:var(--home-text-sm,0.875rem)]">
+                <span className="truncate font-medium text-[var(--home-ink,#111215)]">{row.name}</span>
                 <span
                   className={cn(
                     "shrink-0 tnum",
-                    row.flag ? "font-medium text-[color:var(--iris-status-cancelled)]" : "text-[color:var(--iris-ink-soft)]",
+                    row.flag
+                      ? "font-semibold text-[color:var(--iris-status-cancelled,#C82828)]"
+                      : "font-medium text-[var(--home-ink-muted,#4A4D55)]",
                   )}
                 >
                   marža {formatPercent(margin)}
                 </span>
               </div>
-              <div aria-hidden className="mt-1.5 h-2.5 bg-transparent">
+              <div
+                aria-hidden
+                className="mt-2 h-3 overflow-hidden rounded-[4px] border border-[var(--home-border,#D8D5CD)]/70 bg-[var(--home-surface-recessed,#EEECE6)]"
+              >
                 <div
-                  className="relative h-full bg-[color:var(--iris-border-soft)] transition-[width] duration-500 ease-out"
-                  style={{ width: `${(row.revenue / maxRevenue) * 100}%` }}
+                  className="relative h-full rounded-[3px] bg-[var(--home-border-strong,#B5B0A4)]/60 transition-[width] duration-500 ease-out motion-reduce:transition-none"
+                  style={{ width: inView ? `${(row.revenue / maxRevenue) * 100}%` : "0%" }}
                 >
                   <div
-                    className="absolute inset-y-0 left-0 bg-[color:var(--iris-accent)] transition-[width] duration-500 ease-out"
-                    style={{ width: `${(row.profit / row.revenue) * 100}%` }}
+                    className="absolute inset-y-0 left-0 rounded-[3px] bg-[var(--home-accent,#D4481D)] transition-[width] duration-500 ease-out motion-reduce:transition-none"
+                    style={{ width: inView ? `${(row.profit / row.revenue) * 100}%` : "0%" }}
                   />
                 </div>
               </div>
-              <div className="mt-1 text-[11px] text-[color:var(--iris-ink-mute)] tnum">
+              <div className="mt-1.5 text-[length:var(--home-text-sm,0.875rem)] text-[var(--home-ink-muted,#4A4D55)] tnum">
                 zarada {formatWhole(row.profit)} od {formatWhole(row.revenue)} RSD
               </div>
             </li>
@@ -185,13 +200,14 @@ function ProfitPanel(): React.JSX.Element {
 
 function ProductionPanel(): React.JSX.Element {
   const [view, setView] = useState<keyof typeof PRODUCTION_VIEWS>("steps");
+  const listRef = useRef<HTMLUListElement>(null);
+  const inView = useInViewOnce(listRef);
   const { legend, insight } = PRODUCTION_VIEWS[view];
   const rows = view === "steps" ? STEP_TIMES : MACHINE_LOAD;
   const max = Math.max(...rows.flatMap((row) => [row.reference, row.measured]));
 
   return (
     <Panel
-      kicker="Proizvodnja"
       title="Gde radionica gubi vreme"
       body="Operateri štikliraju korake, a Iris meri koliko su stvarno trajali i koliko je koja mašina zauzeta. Usko grlo se vidi samo."
       toggle={
@@ -203,13 +219,21 @@ function ProductionPanel(): React.JSX.Element {
         />
       }
       legend={[
-        { label: legend[0], swatch: "border border-[color:var(--iris-ink-faint)]" },
-        { label: legend[1], swatch: "bg-[color:var(--iris-proc-step)]" },
+        {
+          label: legend[0],
+          swatch:
+            "rounded-[2px] border border-[var(--home-border-strong,#B5B0A4)] bg-[var(--home-surface-recessed,#EEECE6)]",
+        },
+        { label: legend[1], swatch: "rounded-[2px] bg-[color:var(--iris-proc-step,#2563EB)]" },
       ]}
       insight={insight}
       note="Uz module Procesi rada i Planiranje"
     >
-      <ul aria-label={PRODUCTION_VIEWS[view].label} className="space-y-4">
+      <ul
+        ref={listRef}
+        aria-label={PRODUCTION_VIEWS[view].label}
+        className="divide-y divide-[var(--home-border,#D8D5CD)]/50"
+      >
         {rows.map((row) => {
           const { reference, measured } = row;
           const over = measured > reference * 1.25 || (view === "load" && measured > reference);
@@ -219,33 +243,35 @@ function ProductionPanel(): React.JSX.Element {
               ? `${measured} min umesto ${reference}`
               : `${formatPercent((measured / reference) * 100)} smene`;
           return (
-            <li key={row.label}>
-              <div className="flex items-baseline justify-between gap-3 text-[13px]">
-                <span className="truncate">{row.label}</span>
+            <li key={row.label} className="py-3 first:pt-0 last:pb-0">
+              <div className="flex items-baseline justify-between gap-3 text-[length:var(--home-text-sm,0.875rem)]">
+                <span className="truncate font-medium text-[var(--home-ink,#111215)]">{row.label}</span>
                 <span
                   className={cn(
                     "shrink-0 tnum",
                     over
-                      ? "font-medium text-[color:var(--iris-status-cancelled)]"
+                      ? "font-semibold text-[color:var(--iris-status-cancelled,#C82828)]"
                       : under
-                        ? "font-medium text-[color:var(--iris-status-active)]"
-                        : "text-[color:var(--iris-ink-soft)]",
+                        ? "font-semibold text-[color:var(--iris-status-active,#B45309)]"
+                        : "font-medium text-[var(--home-ink-muted,#4A4D55)]",
                   )}
                 >
                   {detail}
                 </span>
               </div>
-              <div aria-hidden className="relative mt-1.5 h-2.5">
+              <div aria-hidden className="relative mt-2 h-3.5">
                 <div
-                  className="absolute inset-y-0 left-0 border border-[color:var(--iris-ink-faint)] transition-[width] duration-500 ease-out"
-                  style={{ width: `${(reference / max) * 100}%` }}
+                  className="absolute inset-y-0 left-0 rounded-[4px] border border-[var(--home-border-strong,#B5B0A4)] bg-[var(--home-surface-recessed,#EEECE6)] transition-[width] duration-500 ease-out motion-reduce:transition-none"
+                  style={{ width: inView ? `${(reference / max) * 100}%` : "0%" }}
                 />
                 <div
                   className={cn(
-                    "absolute left-0 top-[3px] h-1 transition-[width] duration-500 ease-out",
-                    over ? "bg-[color:var(--iris-status-cancelled)]" : "bg-[color:var(--iris-proc-step)]",
+                    "absolute left-0 top-[3px] h-2 rounded-[2px] transition-[width] duration-500 ease-out motion-reduce:transition-none",
+                    over
+                      ? "bg-[color:var(--iris-status-cancelled,#C82828)]"
+                      : "bg-[color:var(--iris-proc-step,#2563EB)]",
                   )}
-                  style={{ width: `${(measured / max) * 100}%` }}
+                  style={{ width: inView ? `${(measured / max) * 100}%` : "0%" }}
                 />
               </div>
             </li>
@@ -257,7 +283,6 @@ function ProductionPanel(): React.JSX.Element {
 }
 
 function Panel({
-  kicker,
   title,
   body,
   toggle,
@@ -266,7 +291,6 @@ function Panel({
   note,
   children,
 }: {
-  kicker: string;
   title: string;
   body: string;
   toggle: ReactNode;
@@ -276,25 +300,32 @@ function Panel({
   children: ReactNode;
 }): React.JSX.Element {
   return (
-    <article className="flex flex-col border border-border bg-card px-5 py-6 sm:px-7">
-      <div className="text-[10px] uppercase tracking-[1.5px] text-[color:var(--iris-accent)]">{kicker}</div>
-      <h3 className="mt-2 text-[20px] font-normal leading-[1.2] tracking-[-0.5px] sm:text-[22px]">{title}</h3>
-      <p className="mt-2 text-[13px] leading-[1.6] text-[color:var(--iris-ink-soft)]">{body}</p>
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+    <article className="flex h-full w-full flex-col rounded-xl border border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface,#FFFFFF)] p-6 sm:p-8">
+      <h3 className="text-balance font-[family-name:var(--home-font-display)] text-[length:var(--home-text-body,1rem)] font-semibold tracking-[-0.015em] text-[var(--home-ink,#111215)]">
+        {title}
+      </h3>
+      <p className="mt-2 text-pretty text-[length:var(--home-text-body,1rem)] leading-[1.6] text-[var(--home-ink-muted,#4A4D55)]">
+        {body}
+      </p>
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--home-border,#D8D5CD)] pb-4">
         {toggle}
-        <div aria-hidden className="flex gap-3 text-[11px] text-[color:var(--iris-ink-mute)]">
+        <div aria-hidden className="flex flex-wrap gap-3 text-[length:var(--home-text-sm,0.875rem)] text-[var(--home-ink-muted,#4A4D55)]">
           {legend.map((item) => (
-            <span key={item.label} className="inline-flex items-center gap-1.5">
-              <span className={cn("inline-block h-2 w-3", item.swatch)} />
+            <span key={item.label} className="inline-flex items-center gap-2">
+              <span className={cn("inline-block h-2.5 w-3.5", item.swatch)} />
               {item.label}
             </span>
           ))}
         </div>
       </div>
       <div className="mt-5">{children}</div>
-      <p className="mt-6 border-l-2 border-[color:var(--iris-accent)] pl-3 text-[13px] leading-[1.55]">{insight}</p>
+      <p className="mt-6 border-l-2 border-[var(--home-accent,#D4481D)] bg-[var(--home-surface-recessed,#EEECE6)]/50 py-2 pl-3.5 pr-3 text-[length:var(--home-text-sm,0.875rem)] font-medium leading-[1.55] text-[var(--home-ink,#111215)]">
+        {insight}
+      </p>
       {note ? (
-        <p className="mt-auto pt-4 text-[11px] text-[color:var(--iris-ink-mute)]">{note}</p>
+        <p className="mt-auto pt-4 text-[length:var(--home-text-sm,0.875rem)] text-[var(--home-ink-muted,#4A4D55)]">
+          {note}
+        </p>
       ) : null}
     </article>
   );
@@ -312,21 +343,30 @@ function Toggle<K extends string>({
   onChange: (next: K) => void;
 }): React.JSX.Element {
   return (
-    <div role="group" aria-label={label} className="inline-flex border border-border bg-background p-0.5 text-[12px]">
-      {(Object.keys(options) as K[]).map((key) => (
-        <button
-          key={key}
-          type="button"
-          aria-pressed={value === key}
-          onClick={() => onChange(key)}
-          className={cn(
-            "iris-focusable px-3 py-1.5 tracking-[0.2px] transition-colors",
-            value === key ? "bg-foreground text-background" : "text-[color:var(--iris-ink-soft)] hover:text-foreground",
-          )}
-        >
-          {options[key].label}
-        </button>
-      ))}
+    <div
+      role="group"
+      aria-label={label}
+      className="inline-flex flex-wrap rounded-lg border border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface-recessed,#EEECE6)] p-1 text-[length:var(--home-text-sm,0.875rem)]"
+    >
+      {(Object.keys(options) as K[]).map((key) => {
+        const active = value === key;
+        return (
+          <button
+            key={key}
+            type="button"
+            aria-pressed={active}
+            onClick={() => onChange(key)}
+            className={cn(
+              "iris-focusable min-h-[44px] rounded-md px-3 py-1.5 font-medium transition-[color,background-color,box-shadow] duration-150 ease-out sm:min-h-[34px]",
+              active
+                ? "bg-[var(--home-surface,#FFFFFF)] text-[var(--home-ink,#111215)] shadow-[0_1px_2px_rgba(17,18,21,0.06)]"
+                : "text-[var(--home-ink-muted,#4A4D55)] hover:text-[var(--home-ink,#111215)]",
+            )}
+          >
+            {options[key].label}
+          </button>
+        );
+      })}
     </div>
   );
 }

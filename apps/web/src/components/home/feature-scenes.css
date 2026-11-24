@@ -32,8 +32,16 @@
 
 /* --- Paint ------------------------------------------------------------- */
 
-.iris-scene .hs-card { fill: var(--card); stroke: var(--iris-ink-faint); stroke-width: 1.25; }
-.iris-scene .hs-frame { fill: none; stroke: color-mix(in oklch, var(--iris-ink-faint) 70%, transparent); stroke-width: 1.25; }
+.iris-scene .hs-card {
+  fill: var(--card, #ffffff);
+  stroke: var(--iris-ink-faint, #b5b0a4);
+  stroke-width: 1.25;
+}
+.iris-scene .hs-frame {
+  fill: none;
+  stroke: color-mix(in oklch, var(--iris-ink-faint, #b5b0a4) 70%, transparent);
+  stroke-width: 1.25;
+}
 .iris-scene .hs-line,
 .iris-scene .hs-ink-line,
 .iris-scene .hs-acc-line,
@@ -47,46 +55,47 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.iris-scene .hs-line { stroke: var(--iris-ink-faint); }
-.iris-scene .hs-ink-line { stroke: var(--iris-ink-soft); stroke-width: 1.75; }
+.iris-scene .hs-line { stroke: var(--iris-ink-faint, #b5b0a4); }
+.iris-scene .hs-ink-line { stroke: var(--iris-ink-soft, #4a4d55); stroke-width: 1.75; }
 .iris-scene .hs-acc-line,
-.iris-scene .hs-acc-ring { stroke: var(--iris-accent); }
-.iris-scene .hs-ok-line { stroke: var(--iris-status-done); }
+.iris-scene .hs-acc-ring { stroke: var(--iris-accent, #d4481d); }
+.iris-scene .hs-ok-line { stroke: var(--iris-status-done, #15803d); }
 .iris-scene .hs-bad-line,
-.iris-scene .hs-bad-ring { stroke: var(--iris-status-cancelled); }
-.iris-scene .hs-on-line { stroke: var(--card); }
+.iris-scene .hs-bad-ring { stroke: var(--iris-status-cancelled, #c82828); }
+.iris-scene .hs-on-line { stroke: var(--card, #ffffff); }
 .iris-scene .hs-thick { stroke-width: 2; }
-.iris-scene .hs-acc-stroke { stroke: var(--iris-accent); }
+.iris-scene .hs-acc-stroke { stroke: var(--iris-accent, #d4481d); }
 .iris-scene .hs-no-fill { fill: none; }
 .iris-scene .hs-dashed { stroke-dasharray: 3 3; }
 .iris-scene .hs-dotted { stroke-dasharray: 1 4; }
 
-.iris-scene .hs-bg { fill: var(--background); }
-.iris-scene .hs-soft { fill: color-mix(in oklch, var(--iris-ink-faint) 45%, transparent); }
-.iris-scene .hs-mute { fill: var(--iris-ink-faint); }
-.iris-scene .hs-ink { fill: var(--iris-ink-soft); }
-.iris-scene .hs-acc { fill: var(--iris-accent); }
-.iris-scene .hs-acc-soft { fill: color-mix(in oklch, var(--iris-accent) 35%, transparent); }
+.iris-scene .hs-bg { fill: var(--background, #f6f5f1); }
+.iris-scene .hs-soft { fill: color-mix(in oklch, var(--iris-ink-faint, #b5b0a4) 45%, transparent); }
+.iris-scene .hs-mute { fill: var(--iris-ink-faint, #b5b0a4); }
+.iris-scene .hs-ink { fill: var(--iris-ink-soft, #4a4d55); }
+.iris-scene .hs-acc { fill: var(--iris-accent, #d4481d); }
+.iris-scene .hs-acc-soft { fill: color-mix(in oklch, var(--iris-accent, #d4481d) 35%, transparent); }
 .iris-scene .hs-acc-wash {
-  fill: color-mix(in oklch, var(--iris-accent) 14%, transparent);
-  stroke: var(--iris-accent);
+  fill: color-mix(in oklch, var(--iris-accent, #d4481d) 14%, transparent);
+  stroke: var(--iris-accent, #d4481d);
   stroke-width: 1.25;
 }
-.iris-scene .hs-ok { fill: var(--iris-status-done); }
-.iris-scene .hs-bad { fill: var(--iris-status-cancelled); }
-.iris-scene .hs-bad-wash { fill: color-mix(in oklch, var(--iris-status-cancelled) 16%, transparent); }
-.iris-scene .hs-warn { fill: var(--iris-status-active); }
-.iris-scene .hs-blue { fill: var(--iris-proc-step); }
-.iris-scene .hs-green { fill: var(--iris-proc-input); }
+.iris-scene .hs-ok { fill: var(--iris-status-done, #15803d); }
+.iris-scene .hs-bad { fill: var(--iris-status-cancelled, #c82828); }
+.iris-scene .hs-bad-wash { fill: color-mix(in oklch, var(--iris-status-cancelled, #c82828) 16%, transparent); }
+.iris-scene .hs-warn { fill: var(--iris-status-active, #b45309); }
+.iris-scene .hs-blue { fill: var(--iris-proc-step, #2563eb); }
+.iris-scene .hs-green { fill: var(--iris-proc-input, #059669); }
 
 .iris-scene text { font-family: inherit; }
-.iris-scene .hs-text { fill: var(--iris-ink-mute); font-size: 7.5px; letter-spacing: 0.2px; }
-.iris-scene .hs-text-ink { fill: var(--iris-ink-soft); }
+.iris-scene .hs-text { fill: var(--iris-ink-mute, #646872); font-size: 7.5px; letter-spacing: 0.2px; }
+.iris-scene .hs-text-ink { fill: var(--iris-ink-soft, #4a4d55); }
+.iris-scene .hs-scene-label { fill: var(--iris-ink-soft, #4a4d55); font-size: 7px; font-weight: 600; letter-spacing: 0.1px; }
 .iris-scene .hs-caps { font-size: 6px; letter-spacing: 1.2px; }
 .iris-scene .hs-tnum { font-variant-numeric: tabular-nums; }
-.iris-scene .hs-text-strong { fill: var(--foreground); font-size: 10px; font-weight: 500; font-variant-numeric: tabular-nums; }
-.iris-scene .hs-acc-text { fill: var(--iris-accent); }
-.iris-scene .hs-text-on { fill: var(--card); font-size: 8px; font-weight: 700; }
+.iris-scene .hs-text-strong { fill: var(--foreground, #111215); font-size: 10px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.iris-scene .hs-acc-text { fill: var(--iris-accent, #d4481d); }
+.iris-scene .hs-text-on { fill: var(--card, #ffffff); font-size: 8px; font-weight: 700; }
 
 /* --- Build-in effects (driven by --hs-p) -------------------------------- */
 

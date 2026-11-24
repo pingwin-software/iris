@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ScrollReveal } from "./ScrollReveal";
 
 export interface FaqItem {
   q: string;
@@ -11,31 +12,35 @@ export interface FaqItem {
 /** Native disclosure accordion: keyboard and screen-reader friendly without any state. */
 export function Faq({ items }: { items: FaqItem[] }): React.JSX.Element {
   return (
-    <div className="divide-y divide-[color:var(--iris-border-soft)] border-y border-[color:var(--iris-border-soft)]">
+    <div className="iris-home-faq divide-y divide-[var(--home-border,#D8D5CD)] border-y border-[var(--home-border,#D8D5CD)]">
       {items.map((item, index) => (
-        <details key={item.q} open={index === 0} className="group">
-          <summary className="iris-focusable flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[15px] font-medium tracking-[-0.2px] [&::-webkit-details-marker]:hidden">
-            {item.q}
-            <ChevronDown
-              aria-hidden
-              className="h-4 w-4 shrink-0 text-[color:var(--iris-ink-mute)] transition-transform duration-200 group-open:rotate-180"
-            />
-          </summary>
-          <p className="animate-iris-rise pb-5 pr-8 text-[13px] leading-[1.6] text-[color:var(--iris-ink-soft)]">
-            {item.a}
-            {item.link ? (
-              <>
-                {" "}
-                <Link
-                  to={item.link.to}
-                  className="iris-focusable text-foreground underline decoration-[color:var(--iris-border)] underline-offset-2 hover:decoration-foreground"
-                >
-                  {item.link.label}
-                </Link>
-              </>
-            ) : null}
-          </p>
-        </details>
+        <ScrollReveal key={item.q} delay={index * 55}>
+          <details open={index === 0} className="group">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-[length:var(--home-text-body,1rem)] font-semibold tracking-[-0.015em] text-[var(--home-ink,#111215)] transition-[color] duration-150 hover:text-[var(--home-accent,#D4481D)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--home-accent,#D4481D)] motion-reduce:transition-none [&::-webkit-details-marker]:hidden">
+              <span>{item.q}</span>
+              <ChevronDown
+                aria-hidden
+                className="h-5 w-5 shrink-0 text-[var(--home-ink-subtle,#646872)] transition-[rotate,color] duration-200 ease-out group-open:rotate-180 group-open:text-[var(--home-accent,#D4481D)] motion-reduce:transition-none"
+              />
+            </summary>
+            <div className="pb-6 pr-8">
+              <p className="max-w-[65ch] text-[length:var(--home-text-body,1rem)] leading-[1.65] text-[var(--home-ink-muted,#4A4D55)]">
+                {item.a}
+                {item.link ? (
+                  <>
+                    {" "}
+                    <Link
+                      to={item.link.to}
+                      className="font-medium text-[var(--home-ink,#111215)] underline decoration-[var(--home-border-strong,#B5B0A4)] underline-offset-4 transition-[color,text-decoration-color] duration-150 hover:text-[var(--home-accent,#D4481D)] hover:decoration-[var(--home-accent,#D4481D)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--home-accent,#D4481D)] motion-reduce:transition-none"
+                    >
+                      {item.link.label}
+                    </Link>
+                  </>
+                ) : null}
+              </p>
+            </div>
+          </details>
+        </ScrollReveal>
       ))}
     </div>
   );

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { staggerStyle } from "@/lib/motion";
+import { cn } from "@/lib/utils";
+import { ScrollReveal } from "./ScrollReveal";
 import "./feature-scenes.css";
 
 /**
@@ -33,18 +34,36 @@ export interface Feature {
   body: string;
 }
 
-export function FeatureCard({ feature, index }: { feature: Feature; index: number }): React.JSX.Element {
+export function FeatureCard({
+  feature,
+  index,
+  variant = "card",
+}: {
+  feature: Feature;
+  index: number;
+  variant?: "card" | "cell";
+}): React.JSX.Element {
   return (
-    <li
-      className="animate-iris-rise iris-stagger flex flex-col overflow-hidden border border-border bg-card"
-      style={staggerStyle(index)}
-    >
-      <FeatureScene scene={feature.scene} />
-      <div className="px-5 pb-5 pt-4">
-        <h3 className="text-[15px] font-medium tracking-[-0.2px]">{feature.title}</h3>
-        <p className="mt-1.5 text-[13px] leading-[1.6] text-[color:var(--iris-ink-soft)]">{feature.body}</p>
+    <ScrollReveal as="li" delay={Math.min(index, 5) * 75} className="flex">
+      <div
+        className={cn(
+          "flex w-full flex-col bg-[var(--home-surface,#FFFFFF)]",
+          variant === "cell"
+            ? "border-r border-b border-[var(--home-border,#D8D5CD)] transition-[background-color] duration-200 ease-out"
+            : "overflow-hidden rounded-lg border border-[var(--home-border,#D8D5CD)] transition-[border-color] duration-200 ease-out hover:border-[var(--home-border-strong,#B5B0A4)]",
+        )}
+      >
+        <FeatureScene scene={feature.scene} />
+        <div className="p-5 sm:p-6">
+          <h3 className="font-[family-name:var(--home-font-display)] text-[length:var(--home-text-body,1rem)] font-semibold tracking-[-0.015em] text-[var(--home-ink,#111215)]">
+            {feature.title}
+          </h3>
+          <p className="mt-2 text-[length:var(--home-text-body,1rem)] leading-[1.6] text-[var(--home-ink-muted,#4A4D55)]">
+            {feature.body}
+          </p>
+        </div>
       </div>
-    </li>
+    </ScrollReveal>
   );
 }
 
@@ -68,7 +87,7 @@ export function FeatureScene({ scene }: { scene: SceneId }): React.JSX.Element {
       ref={ref}
       data-scene={scene}
       data-playing={playing ? "true" : "false"}
-      className="iris-scene border-b border-[color:var(--iris-border-soft)] bg-background"
+      className="iris-scene border-b border-[var(--home-border,#D8D5CD)] bg-[var(--home-surface-recessed,#EEECE6)] p-3"
     >
       <svg aria-hidden viewBox="0 0 240 96" className="block h-auto w-full" focusable="false">
         {SCENES[scene]}
@@ -365,8 +384,8 @@ const audit = (
       <circle className="hs-mute" cx="46" cy="60" r="1.8" />
     </g>
     <rect className="hs-card" x="68" y="6" width="160" height="84" rx="2" />
-    <text className="hs-text hs-caps" x="76" y="18">
-      DNEVNIK PRISTUPA
+    <text className="hs-text hs-scene-label" x="76" y="18">
+      Dnevnik pristupa
     </text>
     {[
       { time: "09:14", text: "Zatražena pomoć", at: 5, dot: "hs-acc" },

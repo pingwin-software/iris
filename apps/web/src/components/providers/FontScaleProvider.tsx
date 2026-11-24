@@ -7,6 +7,13 @@ import {
 } from "@/lib/font-scale";
 import { setOverlayContainer } from "@/lib/overlay-container";
 
+const DOCUMENT_SCROLL_ATTRIBUTE = "data-iris-document-scroll";
+
+function isDocumentScrollActive(): boolean {
+  const value = document.documentElement.getAttribute(DOCUMENT_SCROLL_ATTRIBUTE);
+  return value !== null && value !== "false";
+}
+
 interface FontScaleProviderProps {
   children: React.ReactNode;
 }
@@ -18,7 +25,27 @@ export function FontScaleProvider({
   const scaleRootRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    applyFontScale(scale, scaleRootRef.current);
+    const syncScale = (): void => {
+      applyFontScale(
+        scale,
+        scaleRootRef.current,
+        isDocumentScrollActive() ? { suspend: true } : undefined,
+      );
+    };
+
+    syncScale();
+
+    if (typeof MutationObserver === "undefined") return;
+    const observer = new MutationObserver(() => {
+      syncScale();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: [DOCUMENT_SCROLL_ATTRIBUTE],
+    });
+    return () => {
+      observer.disconnect();
+    };
   }, [scale]);
 
   const setScale = useCallback((next: number) => {

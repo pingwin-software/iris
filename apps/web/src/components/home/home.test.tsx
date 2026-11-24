@@ -135,14 +135,14 @@ describe("PricingPlans", () => {
     render(<PricingPlans />);
     const plan = (name: string) => screen.getByRole("listitem", { name: `Paket ${name}` });
 
-    expect(within(plan("Osnovni")).getByText("3.900")).toBeInTheDocument();
+    expect(within(plan("Osnovni")).getByText("3.375")).toBeInTheDocument();
     expect(within(plan("Proizvodnja")).getByText("8.900")).toBeInTheDocument();
     expect(within(plan("Pro")).getByText("13.900")).toBeInTheDocument();
     expect(within(plan("Proizvodnja")).getByText("80.000 RSD")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Mesečno" })).toHaveAttribute("aria-pressed", "true");
 
     await userEvent.click(screen.getByRole("button", { name: /Godišnje/ }));
-    expect(within(plan("Osnovni")).getByText("39.000")).toBeInTheDocument();
+    expect(within(plan("Osnovni")).getByText("33.750")).toBeInTheDocument();
     expect(within(plan("Pro")).getByText("139.000")).toBeInTheDocument();
     expect(within(plan("Pro")).getByText("RSD godišnje")).toBeInTheDocument();
   });
