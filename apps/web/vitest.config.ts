@@ -3,13 +3,13 @@ import { searchForWorkspaceRoot } from 'vite'
 import { defineConfig } from 'vitest/config'
 
 // The regulations guide imports Markdown from docs/drzavne-integracije, outside this app.
-const regulationDocsDir = resolve(__dirname, '../../docs/drzavne-integracije')
+const regulationDocsDir = resolve(import.meta.dirname, '../../docs/drzavne-integracije')
 
 export default defineConfig({
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),
-      '@renderer': resolve(__dirname, 'src'),
+      '@': resolve(import.meta.dirname, 'src'),
+      '@renderer': resolve(import.meta.dirname, 'src'),
       '@regulation-docs': regulationDocsDir,
     },
   },
@@ -21,5 +21,8 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['src/**/*.test.{ts,tsx}', 'src/**/*.spec.{ts,tsx}', 'pwa/**/*.test.ts'],
+    execArgv: process.allowedNodeEnvironmentFlags.has('--no-experimental-webstorage')
+      ? ['--no-experimental-webstorage']
+      : [],
   },
 })

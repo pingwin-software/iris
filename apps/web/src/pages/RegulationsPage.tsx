@@ -129,10 +129,29 @@ export default function RegulationsPage(): React.JSX.Element {
 
   useEffect(() => {
     if (!doc) return;
+    const previousTitle = document.title;
     document.title = `${doc.title} · Iris`;
-    const target = hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
-    if (target) target.scrollIntoView();
-    else window.scrollTo({ top: 0 });
+    let fragmentId: string | null = null;
+    if (hash) {
+      try {
+        fragmentId = decodeURIComponent(hash.slice(1));
+      } catch {
+        fragmentId = null;
+      }
+    }
+    const target = fragmentId ? document.getElementById(fragmentId) : null;
+    if (target) {
+      target.scrollIntoView();
+    } else {
+      try {
+        window.scrollTo({ top: 0, behavior: "instant" });
+      } catch {
+        // jsdom does not implement window.scrollTo
+      }
+    }
+    return () => {
+      document.title = previousTitle;
+    };
   }, [doc, hash]);
 
   if (!doc) return <Navigate to={REGULATIONS_BASE_PATH} replace />;
@@ -142,7 +161,7 @@ export default function RegulationsPage(): React.JSX.Element {
       <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 sm:px-8 lg:px-10">
           <Link to="/home" className="iris-focusable flex items-center gap-2 text-foreground">
-            <IrisMark className="h-7 w-7" />
+            <IrisMark className="h-7 w-7" aria-hidden />
             <span className="text-[20px] tracking-[-0.6px]">Iris</span>
           </Link>
           <Link

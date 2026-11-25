@@ -49,7 +49,7 @@ export function PricingPlans(): React.JSX.Element {
               className={cn(
                 "flex h-full w-full flex-col overflow-hidden rounded-xl",
                 plan.highlighted
-                  ? "bg-[var(--home-surface,#FFFFFF)] shadow-[0_18px_48px_-16px_rgba(17,18,21,0.16)]"
+                  ? "bg-[var(--home-surface,#FFFFFF)] ring-1 ring-[#111215]/[0.09] shadow-[0_18px_48px_-16px_rgba(17,18,21,0.16)]"
                   : "bg-[var(--home-bg,#F6F5F1)]",
               )}
             >
@@ -90,7 +90,7 @@ export function PricingPlans(): React.JSX.Element {
               <div className="flex flex-1 flex-col p-6 pt-4 sm:p-7 sm:pt-5">
                 <div className="flex items-baseline gap-2" aria-live="polite">
                   <span
-                    className="home-display text-[clamp(1.85rem,3vw,2.5rem)] font-bold leading-none tracking-[-0.03em] text-[var(--home-ink,#111215)] tnum"
+                    className="home-display text-[length:var(--home-text-heading,2rem)] font-bold leading-none tracking-[-0.03em] text-[var(--home-ink,#111215)] tnum"
                     style={{ fontFamily: "var(--home-font-display, 'Bricolage Grotesque', sans-serif)" }}
                   >
                     {RSD.format(billing === "monthly" ? plan.monthly : plan.annual)}

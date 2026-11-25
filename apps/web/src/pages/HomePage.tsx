@@ -585,17 +585,22 @@ function TopBar({
 }): React.JSX.Element {
   const active = useScrollSpy(SECTION_IDS);
   const [scrolled, setScrolled] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const drawerId = useId();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
   const openButtonRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const drawerEnteredRef = useRef(false);
+  const drawerSessionRef = useRef(0);
 
   useEffect(() => {
     const onScroll = (): void => {
       setScrolled(window.scrollY > 12);
+      setPastHero(window.scrollY >= 80);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -612,7 +617,10 @@ function TopBar({
     const onChange = (event: MediaQueryListEvent): void => {
       if (!event.matches) return;
       const dialog = dialogRef.current;
+      drawerSessionRef.current += 1;
+      drawerEnteredRef.current = false;
       setDrawerOpen(false);
+      dialog?.style.removeProperty("--drawer-backdrop");
       if (dialog?.open) {
         if (typeof dialog.close === "function") {
           dialog.close();
@@ -625,8 +633,80 @@ function TopBar({
     return () => media.removeEventListener("change", onChange);
   }, []);
 
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    const scroller = scrollerRef.current;
+    const sheet = sheetRef.current;
+    if (!dialog || !scroller || !sheet) return;
+
+    let observer: IntersectionObserver | undefined;
+    if (typeof IntersectionObserver === "function") {
+      const visibleThreshold = 1 / Math.max(window.innerWidth, 1);
+      observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[entries.length - 1];
+          if (!entry || !dialog.open || sheet.offsetWidth <= 0) return;
+
+          if (entry.intersectionRatio >= visibleThreshold) {
+            drawerEnteredRef.current = true;
+          }
+
+          if (entry.intersectionRatio < visibleThreshold && drawerEnteredRef.current) {
+            drawerEnteredRef.current = false;
+            drawerSessionRef.current += 1;
+            setDrawerOpen(false);
+            dialog.style.removeProperty("--drawer-backdrop");
+            const wasFocusedInside = dialog.contains(document.activeElement);
+            if (typeof dialog.close === "function") {
+              dialog.close();
+            } else {
+              dialog.removeAttribute("open");
+            }
+            if (wasFocusedInside && document.activeElement !== openButtonRef.current) {
+              openButtonRef.current?.focus({ preventScroll: true });
+            }
+            return;
+          }
+
+          if (entry.intersectionRatio === 1) {
+            setDrawerOpen(true);
+          }
+        },
+        { root: dialog, threshold: [visibleThreshold, 1] },
+      );
+      observer.observe(sheet);
+    }
+
+    const supportsScrollTimeline =
+      typeof CSS !== "undefined" &&
+      typeof CSS.supports === "function" &&
+      CSS.supports("animation-timeline: scroll()");
+
+    let removeScrollListener: (() => void) | undefined;
+    if (!supportsScrollTimeline) {
+      const onScrollerScroll = (): void => {
+        if (sheet.offsetWidth <= 0) return;
+        const ratio = Math.min(1, Math.max(0, scroller.scrollLeft / sheet.offsetWidth));
+        dialog.style.setProperty("--drawer-backdrop", String(ratio));
+      };
+      scroller.addEventListener("scroll", onScrollerScroll, { passive: true });
+      removeScrollListener = () => scroller.removeEventListener("scroll", onScrollerScroll);
+    }
+
+    return () => {
+      drawerSessionRef.current += 1;
+      observer?.disconnect();
+      removeScrollListener?.();
+    };
+  }, []);
+
   const openDrawer = useCallback((): void => {
     const dialog = dialogRef.current;
+    const scroller = scrollerRef.current;
+    const sheet = sheetRef.current;
+    const session = ++drawerSessionRef.current;
+
+    drawerEnteredRef.current = false;
     setDrawerOpen(true);
     if (dialog && !dialog.open) {
       if (typeof dialog.showModal === "function") {
@@ -635,12 +715,56 @@ function TopBar({
         dialog.setAttribute("open", "");
       }
     }
+
+    if (scroller && sheet && sheet.offsetWidth > 0 && typeof scroller.scrollTo === "function") {
+      const supportsScrollInitialTarget =
+        typeof CSS !== "undefined" &&
+        typeof CSS.supports === "function" &&
+        CSS.supports("scroll-initial-target", "nearest");
+
+      if (!supportsScrollInitialTarget) {
+        scroller.scrollTo({ left: 0, behavior: "instant" });
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (!dialog?.open || drawerSessionRef.current !== session) return;
+            scroller.scrollTo({ left: sheet.offsetWidth, behavior: "auto" });
+          });
+        });
+      } else {
+        scroller.scrollTo({ left: sheet.offsetWidth, behavior: "auto" });
+      }
+    }
+
     closeButtonRef.current?.focus({ preventScroll: true });
   }, []);
 
   const closeDrawer = useCallback((): void => {
     const dialog = dialogRef.current;
+    const scroller = scrollerRef.current;
+    const sheet = sheetRef.current;
+    const prefersReducedMotion =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    drawerSessionRef.current += 1;
+
+    if (
+      typeof IntersectionObserver === "function" &&
+      dialog?.open &&
+      scroller &&
+      sheet &&
+      sheet.offsetWidth > 0 &&
+      !prefersReducedMotion &&
+      typeof scroller.scrollTo === "function"
+    ) {
+      drawerEnteredRef.current = true;
+      scroller.scrollTo({ left: 0, behavior: "auto" });
+      return;
+    }
+
+    drawerEnteredRef.current = false;
     setDrawerOpen(false);
+    dialog?.style.removeProperty("--drawer-backdrop");
     if (dialog?.open) {
       if (typeof dialog.close === "function") {
         dialog.close();
@@ -653,7 +777,10 @@ function TopBar({
 
   const handleDrawerLinkClick = useCallback((): void => {
     const dialog = dialogRef.current;
+    drawerSessionRef.current += 1;
+    drawerEnteredRef.current = false;
     setDrawerOpen(false);
+    dialog?.style.removeProperty("--drawer-backdrop");
     if (dialog?.open) {
       if (typeof dialog.close === "function") {
         dialog.close();
@@ -694,11 +821,15 @@ function TopBar({
             onClick={(event) => scrollToSection(event, "sadrzaj")}
             className="iris-focusable inline-flex shrink-0 items-center gap-2.5 rounded-lg py-1 text-[var(--home-ink)]"
           >
-            <IrisMark className="h-7 w-7" />
+            <IrisMark className="h-7 w-7" aria-hidden />
             <span className="home-wordmark text-[1.375rem] font-bold tracking-[-0.03em]">Iris</span>
           </a>
 
-          <nav aria-label="Sekcije" className="hidden items-center gap-5 whitespace-nowrap lg:flex xl:gap-7">
+          <nav
+            aria-label="Sekcije"
+            data-spy-active={pastHero ? "true" : "false"}
+            className="iris-home-spy-nav hidden items-center gap-5 whitespace-nowrap lg:flex xl:gap-7"
+          >
             {DESKTOP_NAV_LINKS.map((link) => (
               <a
                 key={link.id}
@@ -715,7 +846,7 @@ function TopBar({
           <div className="flex shrink-0 items-center gap-2">
             <Link
               to={primaryHref}
-              className="iris-focusable iris-home-btn hidden items-center gap-1.5 rounded-lg bg-[var(--home-ink)] px-4 py-2 text-[length:var(--home-text-sm)] font-semibold text-[#FFFFFF] hover:bg-[#23262E] active:translate-y-px sm:inline-flex"
+              className="iris-focusable iris-home-btn hidden items-center gap-1.5 rounded-lg bg-[var(--home-ink)] px-4 py-2 text-[length:var(--home-text-sm)] font-semibold text-[#FFFFFF] hover:bg-[var(--home-btn-hover,#252830)] active:translate-y-px sm:inline-flex"
             >
               {primaryLabel}
               <ArrowRight aria-hidden className="h-4 w-4" />
@@ -741,74 +872,87 @@ function TopBar({
         id={drawerId}
         aria-label="Navigacija"
         className="iris-home-drawer"
-        onClose={() => setDrawerOpen(false)}
+        onClose={() => {
+          drawerSessionRef.current += 1;
+          drawerEnteredRef.current = false;
+          setDrawerOpen(false);
+          dialogRef.current?.style.removeProperty("--drawer-backdrop");
+        }}
+        onCancel={(event) => {
+          if (event.cancelable) {
+            event.preventDefault();
+            closeDrawer();
+          }
+        }}
         onClick={(event) => {
           if (!sheetRef.current?.contains(event.target as Node)) {
             closeDrawer();
           }
         }}
       >
-        <div ref={sheetRef} className="iris-home-drawer-sheet">
-          <div className="flex items-center justify-between px-5 py-3.5">
-            <a
-              href="#sadrzaj"
-              onClick={(event) => scrollToSection(event, "sadrzaj", true)}
-              className="iris-focusable inline-flex min-h-[44px] items-center gap-2.5 rounded-lg text-[var(--home-ink)]"
-            >
-              <IrisMark className="h-7 w-7" />
-              <span className="home-wordmark text-[1.375rem] font-bold tracking-[-0.03em]">Iris</span>
-            </a>
-            <button
-              ref={closeButtonRef}
-              type="button"
-              aria-label="Zatvori meni"
-              onClick={closeDrawer}
-              className="iris-focusable inline-flex h-11 w-11 items-center justify-center rounded-lg text-[var(--home-ink)] transition-[color,background-color] duration-150 hover:bg-[var(--home-surface-recessed)]"
-            >
-              <X aria-hidden className="h-5 w-5" />
-            </button>
-          </div>
-
-          <nav aria-label="Mobilna navigacija" className="flex flex-1 flex-col gap-1 px-4 py-4">
-            {DRAWER_LINKS.map((link) => {
-              const isCurrent = active === link.id;
-              return (
-                <a
-                  key={link.id}
-                  href={`#${link.id}`}
-                  aria-current={isCurrent ? "location" : undefined}
-                  onClick={(event) => scrollToSection(event, link.id, true)}
-                  className={cn(
-                    "iris-focusable flex min-h-[44px] items-center rounded-lg border-l-2 px-3 py-2 text-[length:var(--home-text-body)] transition-[color,background-color] duration-150",
-                    isCurrent
-                      ? "border-[var(--home-accent)] bg-[var(--home-surface-recessed)] font-semibold text-[var(--home-ink)]"
-                      : "border-transparent font-medium text-[var(--home-ink-muted)] hover:bg-[var(--home-surface-recessed)] hover:text-[var(--home-ink)]",
-                  )}
-                >
-                  {link.label}
-                </a>
-              );
-            })}
-
-            <Link
-              to={REGULATIONS_BASE_PATH}
-              onClick={handleDrawerLinkClick}
-              className="iris-focusable mt-3 flex min-h-[44px] items-center rounded-lg px-3 py-2 text-[length:var(--home-text-body)] font-medium text-[var(--home-ink-muted)] transition-[color,background-color] duration-150 hover:bg-[var(--home-surface-recessed)] hover:text-[var(--home-ink)]"
-            >
-              Propisi
-            </Link>
-
-            <div className="mt-auto pt-4">
-              <Link
-                to={primaryHref}
-                onClick={handleDrawerLinkClick}
-                className="iris-focusable iris-home-btn flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-[var(--home-ink)] px-5 py-3 text-[length:var(--home-text-body)] font-semibold text-[#FFFFFF] hover:bg-[#23262E]"
+        <div ref={scrollerRef} className="iris-home-drawer-scroller">
+          <div ref={sheetRef} className="iris-home-drawer-sheet">
+            <div className="flex items-center justify-between px-5 py-3.5">
+              <a
+                href="#sadrzaj"
+                onClick={(event) => scrollToSection(event, "sadrzaj", true)}
+                className="iris-focusable inline-flex min-h-[44px] items-center gap-2.5 rounded-lg text-[var(--home-ink)]"
               >
-                {primaryLabel}
-                <ArrowRight aria-hidden className="h-4 w-4" />
-              </Link>
+                <IrisMark className="h-7 w-7" aria-hidden />
+                <span className="home-wordmark text-[1.375rem] font-bold tracking-[-0.03em]">Iris</span>
+              </a>
+              <button
+                ref={closeButtonRef}
+                type="button"
+                aria-label="Zatvori meni"
+                onClick={closeDrawer}
+                className="iris-focusable inline-flex h-11 w-11 items-center justify-center rounded-lg text-[var(--home-ink)] transition-[color,background-color] duration-150 hover:bg-[var(--home-surface-recessed)]"
+              >
+                <X aria-hidden className="h-5 w-5" />
+              </button>
             </div>
-          </nav>
+
+            <nav aria-label="Mobilna navigacija" className="flex flex-1 flex-col gap-1 px-4 py-4">
+              {DRAWER_LINKS.map((link) => {
+                const isCurrent = active === link.id;
+                return (
+                  <a
+                    key={link.id}
+                    href={`#${link.id}`}
+                    aria-current={isCurrent ? "location" : undefined}
+                    onClick={(event) => scrollToSection(event, link.id, true)}
+                    className={cn(
+                      "iris-focusable flex min-h-[44px] items-center rounded-lg border-l-2 px-3 py-2 text-[length:var(--home-text-body)] transition-[color,background-color] duration-150",
+                      isCurrent
+                        ? "border-[var(--home-accent)] bg-[var(--home-surface-recessed)] font-semibold text-[var(--home-ink)]"
+                        : "border-transparent font-medium text-[var(--home-ink-muted)] hover:bg-[var(--home-surface-recessed)] hover:text-[var(--home-ink)]",
+                    )}
+                  >
+                    {link.label}
+                  </a>
+                );
+              })}
+
+              <Link
+                to={REGULATIONS_BASE_PATH}
+                onClick={handleDrawerLinkClick}
+                className="iris-focusable mt-3 flex min-h-[44px] items-center rounded-lg px-3 py-2 text-[length:var(--home-text-body)] font-medium text-[var(--home-ink-muted)] transition-[color,background-color] duration-150 hover:bg-[var(--home-surface-recessed)] hover:text-[var(--home-ink)]"
+              >
+                Propisi
+              </Link>
+
+              <div className="mt-auto pt-4">
+                <Link
+                  to={primaryHref}
+                  onClick={handleDrawerLinkClick}
+                  className="iris-focusable iris-home-btn flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-[var(--home-ink)] px-5 py-3 text-[length:var(--home-text-body)] font-semibold text-[#FFFFFF] hover:bg-[var(--home-btn-hover,#252830)]"
+                >
+                  {primaryLabel}
+                  <ArrowRight aria-hidden className="h-4 w-4" />
+                </Link>
+              </div>
+            </nav>
+          </div>
         </div>
       </dialog>
     </>
@@ -818,6 +962,7 @@ function TopBar({
 function Hero({ primaryHref, primaryLabel }: { primaryHref: string; primaryLabel: string }): React.JSX.Element {
   return (
     <section className="relative overflow-hidden bg-[var(--home-bg)] px-5 pb-14 pt-24 sm:px-8 sm:pb-20 sm:pt-32 lg:px-10">
+      <div aria-hidden="true" data-testid="hero-grid" className="iris-home-grid-bg pointer-events-none absolute inset-0" />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-[38rem]"
@@ -874,7 +1019,7 @@ function PointGrid({ points, columns }: { points: Feature[]; columns: "two" | "t
  */
 function RoleVisibilitySpecimen(): React.JSX.Element {
   return (
-    <div className="overflow-hidden rounded-2xl bg-[var(--home-bg)] shadow-[0_12px_36px_-18px_rgba(17,18,21,0.10)]">
+    <div className="overflow-hidden rounded-2xl bg-[var(--home-bg)] shadow-[0_12px_36px_-18px_rgba(17,18,21,0.10)] ring-1 ring-[#111215]/[0.08]">
       <div className="flex flex-wrap items-baseline justify-between gap-3 bg-[var(--home-surface-recessed)]/70 px-5 py-3.5 sm:px-6">
         <span className="text-[length:var(--home-text-sm)] font-medium text-[var(--home-ink-muted)]">
           Primer stavke naloga
@@ -995,7 +1140,7 @@ function OnboardingSteps(): React.JSX.Element {
         </div>
         <a
           href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Iris: prikaz uživo")}`}
-          className="iris-focusable iris-home-btn inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-lg bg-[var(--home-ink)] px-5 py-2.5 text-[length:var(--home-text-sm)] font-semibold text-[#FFFFFF] hover:bg-[#23262E] active:translate-y-px"
+          className="iris-focusable iris-home-btn inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-lg bg-[var(--home-ink)] px-5 py-2.5 text-[length:var(--home-text-sm)] font-semibold text-[#FFFFFF] hover:bg-[var(--home-btn-hover,#252830)] active:translate-y-px"
         >
           <Mail aria-hidden className="h-4 w-4" />
           {CONTACT_EMAIL}
@@ -1041,7 +1186,7 @@ function Footer({
       <div className="mx-auto flex max-w-7xl flex-col justify-between gap-10 md:flex-row md:items-start">
         <div className="max-w-xs">
           <div className="flex items-center gap-2.5 text-[var(--home-ink)]">
-            <IrisMark className="h-7 w-7" />
+            <IrisMark className="h-7 w-7" aria-hidden />
             <span className="home-wordmark text-[1.25rem] font-bold tracking-[-0.03em]">Iris</span>
           </div>
           <p className="mt-3 text-[length:var(--home-text-sm)] leading-[1.6] text-[var(--home-ink-muted)]">
@@ -1106,7 +1251,7 @@ function PrimaryLink({ to, children }: { to: string; children: ReactNode }): Rea
   return (
     <Link
       to={to}
-      className="iris-focusable iris-home-btn group inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-[var(--home-ink)] px-6 py-3 text-[length:var(--home-text-body)] font-semibold text-[var(--home-bg)] shadow-[0_1px_2px_rgba(17,18,21,0.08)] hover:opacity-92 active:translate-y-px"
+      className="iris-focusable iris-home-btn group inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-[var(--home-ink)] px-6 py-3 text-[length:var(--home-text-body)] font-semibold text-[var(--home-bg)] shadow-[0_1px_2px_rgba(17,18,21,0.08)] hover:bg-[var(--home-btn-hover,#252830)] active:translate-y-px"
     >
       {children}
       <ArrowRight

@@ -4,12 +4,24 @@
  * and its sections/SVG scenes warm limestone light and carbon dark tokens.
  */
 
+@property --drawer-backdrop {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
 /* Ensure font-scale wrapper never traps document scroll or fixed headers on /home */
 [data-iris-scale-root]:has(.iris-home-theme) {
   transform: none !important;
   width: auto !important;
   height: auto !important;
   overflow: visible !important;
+}
+
+/* Keep focused controls and anchor targets visible below the fixed 4.25rem header (WCAG 2.4.11) */
+html:has(.iris-home-theme),
+html[data-iris-document-scroll="true"] {
+  scroll-padding-top: 5rem;
 }
 
 .iris-home-theme,
@@ -26,6 +38,7 @@
   --home-border-strong: #B5B0A4;
   --home-accent: #D4481D;
   --home-accent-ink: #A93511;
+  --home-btn-hover: #252830;
 
   --home-font-display: "Bricolage Grotesque", "IBM Plex Sans", system-ui, sans-serif;
   --home-font-body: "IBM Plex Sans", system-ui, sans-serif;
@@ -94,6 +107,7 @@
   --home-border-strong: #3A3F4D;
   --home-accent: #E85A2D;
   --home-accent-ink: #FF7A4D;
+  --home-btn-hover: #FFFFFF;
 
   background-color: var(--home-bg);
   color: var(--home-ink);
@@ -133,6 +147,29 @@
   --iris-proc-input: #34D399;
   --iris-proc-product: var(--home-accent);
   --iris-proc-byproduct: var(--home-ink-subtle);
+}
+
+/* Architectural drafting & registration grid behind the /home hero */
+.iris-home-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(17, 18, 21, 0.115) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 18, 21, 0.115) 1px, transparent 1px),
+    linear-gradient(to right, rgba(17, 18, 21, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 18, 21, 0.06) 1px, transparent 1px);
+  background-size: 240px 240px, 240px 240px, 48px 48px, 48px 48px;
+  background-position: top center;
+  mask-image: radial-gradient(
+    ellipse 96% 84% at 50% 24%,
+    #000 42%,
+    rgba(0, 0, 0, 0.55) 72%,
+    transparent 98%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 96% 84% at 50% 24%,
+    #000 42%,
+    rgba(0, 0, 0, 0.55) 72%,
+    transparent 98%
+  );
 }
 
 /* Architectural typography scale & helpers */
@@ -181,6 +218,10 @@
 }
 
 /* Single-line desktop scrollspy link with non-color underline indicator */
+.iris-home-spy-nav {
+  scroll-target-group: auto;
+}
+
 .iris-home-nav-link {
   position: relative;
   transition-property: color;
@@ -204,17 +245,30 @@
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.iris-home-nav-link[aria-current="location"] {
+.iris-home-spy-nav[data-spy-active="true"] .iris-home-nav-link:is(:target-current, [aria-current="location"]) {
   color: var(--home-ink, #111215);
 }
 
-.iris-home-nav-link[aria-current="location"]::after {
+.iris-home-spy-nav[data-spy-active="true"] .iris-home-nav-link[aria-current="location"] {
+  color: var(--home-ink, #111215);
+}
+
+.iris-home-spy-nav[data-spy-active="true"] .iris-home-nav-link:is(:target-current, [aria-current="location"])::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.iris-home-spy-nav[data-spy-active="true"] .iris-home-nav-link[aria-current="location"]::after {
   transform: scaleX(1);
   opacity: 1;
 }
 
 @media (forced-colors: active) {
-  .iris-home-nav-link[aria-current="location"]::after {
+  .iris-home-spy-nav[data-spy-active="true"] .iris-home-nav-link:is(:target-current, [aria-current="location"])::after {
+    background-color: Highlight;
+  }
+
+  .iris-home-spy-nav[data-spy-active="true"] .iris-home-nav-link[aria-current="location"]::after {
     background-color: Highlight;
   }
 }
@@ -225,10 +279,12 @@
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Native <dialog> mobile navigation drawer */
+/* Native <dialog> swipeable mobile navigation drawer (right edge) */
 .iris-home-drawer {
   color-scheme: only light;
   color: var(--home-ink, #111215);
+  --drawer-width: min(22rem, 80dvw, 100dvw - 24px);
+  --drawer-backdrop: 0;
   position: fixed;
   inset: 0;
   inline-size: 100%;
@@ -248,13 +304,36 @@
 }
 
 .iris-home-drawer[open] {
-  display: flex;
-  justify-content: flex-end;
+  display: block;
+  --drawer-backdrop: 1;
 }
 
 .iris-home-drawer::backdrop {
-  background-color: rgba(17, 18, 21, 0.45);
+  background-color: rgba(17, 18, 21, 1);
+  opacity: calc(var(--drawer-backdrop) * 0.45);
   backdrop-filter: blur(2px);
+}
+
+.iris-home-drawer-scroller {
+  display: grid;
+  grid-template-columns: 100% var(--drawer-width);
+  inline-size: 100%;
+  block-size: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+}
+
+.iris-home-drawer-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.iris-home-drawer-scroller::before {
+  content: "";
+  scroll-snap-align: start;
+  scroll-initial-target: nearest;
 }
 
 .iris-home-drawer-sheet {
@@ -262,9 +341,10 @@
   background-color: var(--home-surface, #FFFFFF);
   color: var(--home-ink, #111215);
   font-family: var(--home-font-body);
-  inline-size: min(22rem, 88dvw);
-  block-size: 100dvh;
-  max-block-size: 100dvh;
+  scroll-snap-align: end;
+  inline-size: 100%;
+  block-size: 100svh;
+  max-block-size: 100svh;
   overflow-y: auto;
   overscroll-behavior: contain;
   box-shadow: -16px 0 48px -12px rgba(17, 18, 21, 0.18);
@@ -276,47 +356,6 @@
   outline: 2px solid var(--home-accent, #D4481D);
   outline-offset: 2px;
   box-shadow: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .iris-home-drawer {
-    transition-property: display, overlay;
-    transition-duration: 220ms;
-    transition-behavior: allow-discrete;
-  }
-
-  .iris-home-drawer::backdrop {
-    opacity: 0;
-    transition-property: opacity, display, overlay;
-    transition-duration: 220ms;
-    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-    transition-behavior: allow-discrete;
-  }
-
-  .iris-home-drawer[open]::backdrop {
-    opacity: 1;
-  }
-
-  .iris-home-drawer-sheet {
-    transform: translateX(100%);
-    transition-property: transform;
-    transition-duration: 220ms;
-    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .iris-home-drawer[open] .iris-home-drawer-sheet {
-    transform: translateX(0);
-  }
-}
-
-@starting-style {
-  .iris-home-drawer[open]::backdrop {
-    opacity: 0;
-  }
-
-  .iris-home-drawer[open] .iris-home-drawer-sheet {
-    transform: translateX(100%);
-  }
 }
 
 /* Smooth intrinsic-size FAQ disclosures (<details>::details-content) */
@@ -348,6 +387,31 @@
   html:has(.iris-home-theme),
   html[data-iris-document-scroll="true"] {
     scroll-behavior: smooth;
+  }
+
+  .iris-home-drawer-scroller {
+    scroll-behavior: smooth;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .iris-home-drawer {
+      timeline-scope: --iris-drawer-fade;
+      animation: iris-home-drawer-backdrop linear both;
+      animation-timeline: --iris-drawer-fade;
+    }
+
+    .iris-home-drawer-scroller {
+      scroll-timeline: --iris-drawer-fade x;
+    }
+
+    @keyframes iris-home-drawer-backdrop {
+      0% {
+        --drawer-backdrop: 0;
+      }
+      100% {
+        --drawer-backdrop: 1;
+      }
+    }
   }
 
   .iris-reveal {
@@ -384,9 +448,6 @@
   .iris-home-nav-link,
   .iris-home-nav-link::after,
   .iris-home-btn,
-  .iris-home-drawer,
-  .iris-home-drawer::backdrop,
-  .iris-home-drawer-sheet,
   .iris-home-faq details::details-content,
   .iris-reveal {
     transition: none !important;

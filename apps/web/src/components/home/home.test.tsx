@@ -18,7 +18,7 @@ describe("WorkOrderDemo", () => {
     render(<WorkOrderDemo />);
     const status = () => screen.getByRole("status");
     expect(status()).toHaveTextContent("Nov");
-    expect(screen.getByText("Izvršilac").nextElementSibling).toHaveTextContent("—");
+    expect(screen.getByText("Izvršilac").nextElementSibling).toHaveTextContent("Nije dodeljen");
 
     await userEvent.click(screen.getByRole("button", { name: /Pomeri u „Dodeljen“/ }));
     expect(status()).toHaveTextContent("Dodeljen");

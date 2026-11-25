@@ -9,9 +9,10 @@ import { cleanup, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { LoginShell } from './LoginShell'
 import { BackofficeScreen } from '@/components/platform/BackofficeScreen'
+import PublicWorkOrderPage from '@/pages/PublicWorkOrderPage'
 import '@/i18n'
 
 afterEach(() => {
@@ -68,5 +69,17 @@ describe('scrollable sign-in screens', () => {
       </BackofficeScreen>,
     )
     expectScrollableScreen(screen.getByTestId('backoffice-screen'))
+  })
+
+  it('the public work-order page scrolls', () => {
+    vi.stubGlobal('api', { getPublicWorkOrderStatus: vi.fn(() => new Promise(() => {})) })
+    render(
+      <MemoryRouter initialEntries={['/public/work-orders/tok-1']}>
+        <Routes>
+          <Route path="/public/work-orders/:token" element={<PublicWorkOrderPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    expectScrollableScreen(screen.getByTestId('public-work-order-screen'))
   })
 })

@@ -93,7 +93,7 @@ export function WorkOrderDemo(): React.JSX.Element {
     <div className="mx-auto w-full max-w-5xl">
       <div
         data-testid="work-order-demo"
-        className="overflow-hidden rounded-2xl bg-[var(--home-surface,#FFFFFF)] text-left shadow-[0_20px_56px_-18px_rgba(17,18,21,0.12),0_2px_10px_-2px_rgba(17,18,21,0.05)]"
+        className="overflow-hidden rounded-2xl bg-[var(--home-surface,#FFFFFF)] text-left shadow-[0_20px_56px_-18px_rgba(17,18,21,0.12),0_2px_10px_-2px_rgba(17,18,21,0.05)] ring-1 ring-[#111215]/[0.08]"
       >
         <div className="flex flex-wrap items-center justify-between gap-3 bg-[var(--home-surface-recessed,#EEECE6)] px-4 py-3.5 sm:px-6">
           <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
@@ -123,7 +123,7 @@ export function WorkOrderDemo(): React.JSX.Element {
                 <button
                   type="button"
                   onClick={reset}
-                  className="iris-focusable iris-press inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-[var(--home-ink,#111215)] px-3.5 py-1.5 text-[length:var(--home-text-sm,0.875rem)] font-medium text-[var(--home-surface,#FFFFFF)] transition-[opacity,background-color,transform] duration-150 ease-out hover:opacity-90 sm:min-h-[36px] sm:flex-initial"
+                  className="iris-focusable iris-press inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-[var(--home-ink,#111215)] px-3.5 py-1.5 text-[length:var(--home-text-sm,0.875rem)] font-medium text-[var(--home-surface,#FFFFFF)] transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--home-btn-hover,#252830)] sm:min-h-[36px] sm:flex-initial"
                 >
                   <RotateCcw aria-hidden className="h-4 w-4 shrink-0" />
                   Počni ispočetka
@@ -132,7 +132,7 @@ export function WorkOrderDemo(): React.JSX.Element {
                 <button
                   type="button"
                   onClick={() => setStep((value) => value + 1)}
-                  className="iris-focusable iris-press inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-[var(--home-ink,#111215)] px-3.5 py-1.5 text-[length:var(--home-text-sm,0.875rem)] font-medium text-[var(--home-surface,#FFFFFF)] transition-[opacity,background-color,transform] duration-150 ease-out hover:opacity-90 sm:min-h-[36px] sm:flex-initial"
+                  className="iris-focusable iris-press inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-[var(--home-ink,#111215)] px-3.5 py-1.5 text-[length:var(--home-text-sm,0.875rem)] font-medium text-[var(--home-surface,#FFFFFF)] transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--home-btn-hover,#252830)] sm:min-h-[36px] sm:flex-initial"
                 >
                   Pomeri u „{next.label}“
                   <ArrowRight aria-hidden className="h-4 w-4 shrink-0" />
@@ -235,7 +235,7 @@ function InternalView({
     { label: "Klijent", value: ORDER.client },
     { label: "Opis posla", value: ORDER.description },
     { label: "Papir", value: ORDER.paper },
-    { label: "Izvršilac", value: step >= 1 ? "Ana" : "—" },
+    { label: "Izvršilac", value: step >= 1 ? "Ana" : "Nije dodeljen" },
     { label: "Rok", value: ORDER.due, numeric: true },
     ...(step >= 3 ? [{ label: "Završeno", value: ORDER.completed, numeric: true }] : []),
   ];

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useLayoutEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useQueries } from '@tanstack/react-query'
@@ -48,6 +48,13 @@ function PlanningPrintPage(): React.JSX.Element {
   const isAdmin = currentUser.role === 'admin'
   const { firmName } = useOrganization()
   const [params, setParams] = useSearchParams()
+
+  useLayoutEffect(() => {
+    document.documentElement.setAttribute('data-iris-document-scroll', 'true')
+    return () => {
+      document.documentElement.removeAttribute('data-iris-document-scroll')
+    }
+  }, [])
 
   const dateParam = params.get('date')
   const date = isIsoDate(dateParam) ? dateParam : getLocalIsoDate()

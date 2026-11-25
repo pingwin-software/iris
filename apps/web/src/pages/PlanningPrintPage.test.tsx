@@ -55,6 +55,7 @@ function stubApi() {
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
+  document.documentElement.removeAttribute('data-iris-document-scroll')
 })
 
 describe('PlanningPrintPage', () => {
@@ -101,5 +102,15 @@ describe('PlanningPrintPage', () => {
     expect(within(heidelberg).getAllByTestId('dispatch-day-total')).toHaveLength(2)
     expect(heidelberg).not.toHaveTextContent('RN-2026-4')
     expect(screen.getByRole('tab', { name: 'Nacrt' })).toHaveAttribute('aria-selected', 'true')
+  })
+
+  it('enables document scrolling while mounted and cleans up on unmount', async () => {
+    stubApi()
+    expect(document.documentElement).not.toHaveAttribute('data-iris-document-scroll')
+    const { unmount } = renderPlanningPage(<PlanningPrintPage />, { role: 'user', path: `/page?date=${D}` })
+    expect(document.documentElement).toHaveAttribute('data-iris-document-scroll', 'true')
+    await screen.findAllByTestId('dispatch-section')
+    unmount()
+    expect(document.documentElement).not.toHaveAttribute('data-iris-document-scroll')
   })
 })

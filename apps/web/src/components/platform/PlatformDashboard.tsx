@@ -254,7 +254,7 @@ export function PlatformDashboard({
   const navTabs = <SectionTabs tabs={sections} label={t("platform.nav.label")} />;
 
   return (
-    <div className="min-h-dvh bg-[color:var(--pf-bg)] text-[color:var(--pf-text)]">
+    <div className="iris-screen bg-[color:var(--pf-bg)] text-[color:var(--pf-text)]">
       {/* Header */}
       <header className="sticky top-0 z-20 border-b border-[color:var(--pf-border)] bg-[color:var(--pf-bg)]/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-4 px-4 sm:px-6">
