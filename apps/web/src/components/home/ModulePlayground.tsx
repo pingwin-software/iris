@@ -1,6 +1,8 @@
-import { useId, useState } from "react";
+import { useId, useRef, useState, type CSSProperties } from "react";
 import { CalendarRange, Check, UserCheck, Warehouse, Workflow, type LucideIcon } from "lucide-react";
+import { IrisMark } from "@/components/brand/IrisMark";
 import { cn } from "@/lib/utils";
+import { ScrollReveal, useInViewOnce } from "./ScrollReveal";
 import {
   countEnabled,
   MODULE_EFFECTS,
@@ -17,8 +19,9 @@ import type { OrganizationModules } from "@/types/settings";
 
 /**
  * "Build your Iris": the four optional modules as switches that obey the real
- * dependency rules, beside a mock of the app's menu that gains and loses
- * entries as they go on and off.
+ * dependency rules, beside a mock of the app's sidebar that gains and loses
+ * entries as they go on and off. Lives inside the dark `.iris-home-carbon`
+ * stage on /home and carries carbon fallbacks so isolated renders match.
  */
 
 interface ModuleCopy {
@@ -64,52 +67,94 @@ const MODULE_COPY: Record<ModuleKey, ModuleCopy> = {
 
 export function ModulePlayground(): React.JSX.Element {
   const [modules, setModules] = useState<OrganizationModules>(NO_MODULES);
+  const asideRef = useRef<HTMLElement>(null);
+  const asideVisible = useInViewOnce(asideRef);
   const enabled = countEnabled(modules);
   const nav = visibleNav(modules, "admin");
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
-      <ul className="grid gap-4 md:grid-cols-2">
-        {MODULE_ORDER.map((key) => (
-          <ModuleCard
-            key={key}
-            moduleKey={key}
-            modules={modules}
-            onChange={(on) => setModules((current) => setModule(current, key, on))}
-          />
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <ul className="grid gap-5 md:grid-cols-2">
+        {MODULE_ORDER.map((key, index) => (
+          <ScrollReveal key={key} as="li" delay={index * 75} className="flex">
+            <ModuleCard
+              moduleKey={key}
+              modules={modules}
+              onChange={(on) => setModules((current) => setModule(current, key, on))}
+            />
+          </ScrollReveal>
         ))}
       </ul>
 
-      <aside aria-label="Pregled menija" className="border border-border bg-background px-5 py-5 lg:sticky lg:top-24 lg:self-start">
-        <div className="text-[10px] uppercase tracking-[1.5px] text-[color:var(--iris-ink-mute)]">Meni Vaše aplikacije</div>
-        <p className="mt-1 text-[12px] text-[color:var(--iris-ink-soft)]" aria-live="polite">
-          {enabled === 0
-            ? "Osnovni Iris, bez modula."
-            : `${enabled} od 4 modula uključeno.`}
-        </p>
-        <ul aria-label="Stavke menija" className="mt-4 space-y-1 text-[13px]">
+      <aside
+        ref={asideRef}
+        aria-label="Pregled menija"
+        data-reveal={asideVisible ? "shown" : "hidden"}
+        data-reveal-variant="up"
+        style={
+          {
+            "--reveal-delay": "140ms",
+            "--iris-accent": "var(--home-accent, #E85A2D)",
+          } as CSSProperties
+        }
+        className="iris-reveal overflow-hidden rounded-xl bg-[var(--home-surface,#121418)] ring-1 ring-white/[0.06] lg:sticky lg:top-24 lg:self-start"
+      >
+        <div className="bg-[var(--home-surface-recessed,#191C22)] px-5 py-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <IrisMark className="h-5 w-5 shrink-0 text-[var(--home-ink,#F2F2F4)]" />
+              <span
+                className="home-display text-[length:var(--home-text-body,1rem)] font-bold tracking-[-0.02em] text-[var(--home-ink,#F2F2F4)]"
+                style={{ fontFamily: "var(--home-font-display, 'Bricolage Grotesque', sans-serif)" }}
+              >
+                Iris
+              </span>
+            </div>
+            <span className="text-[length:var(--home-text-sm,0.875rem)] font-medium text-[var(--home-ink-subtle,#7E8390)]">
+              Meni aplikacije
+            </span>
+          </div>
+          <p
+            className="mt-2 text-[length:var(--home-text-sm,0.875rem)] text-[var(--home-ink-muted,#A6AAB5)] tnum"
+            aria-live="polite"
+          >
+            {enabled === 0
+              ? "Osnovni Iris, bez modula."
+              : `${enabled} od 4 modula uključeno.`}
+          </p>
+        </div>
+
+        <ul
+          aria-label="Stavke menija"
+          className="space-y-1 px-4 py-4 text-[length:var(--home-text-sm,0.875rem)]"
+        >
           {nav.map((item) => (
             <li
               key={item.label}
               className={cn(
-                "animate-iris-rise flex items-center justify-between gap-2 border-l-2 py-1 pl-3",
-                item.module ? "border-[color:var(--iris-accent)] text-foreground" : "border-transparent text-[color:var(--iris-ink-soft)]",
+                "animate-iris-rise flex items-center justify-between gap-2 rounded-r-md border-l-2 py-1.5 pl-3 pr-2.5",
+                item.module
+                  ? "border-[var(--home-accent,#E85A2D)] bg-[rgba(232,90,45,0.1)] font-medium text-[var(--home-ink,#F2F2F4)]"
+                  : "border-transparent text-[var(--home-ink-muted,#A6AAB5)]",
               )}
             >
               {item.label}
               {item.module && MODULE_LABELS[item.module] !== item.label ? (
-                <span className="text-[10px] uppercase tracking-[1px] text-[color:var(--iris-ink-mute)]">
+                <span className="font-normal text-[var(--home-accent-ink,#FF7A4D)]">
                   {MODULE_LABELS[item.module]}
                 </span>
               ) : null}
             </li>
           ))}
         </ul>
+
         {enabled > 0 && (
-          <ul className="mt-5 space-y-2 border-t border-[color:var(--iris-border-soft)] pt-4 text-[12px] leading-[1.5] text-[color:var(--iris-ink-soft)]">
+          <ul className="space-y-2.5 bg-[var(--home-surface-recessed,#191C22)] px-5 py-4 text-[length:var(--home-text-sm,0.875rem)] leading-[1.55] text-[var(--home-ink-muted,#A6AAB5)]">
             {MODULE_ORDER.filter((key) => modules[key]).map((key) => (
               <li key={key} className="animate-iris-rise">
-                <span className="font-medium text-foreground">{MODULE_LABELS[key]}: </span>
+                <span className="font-semibold text-[var(--home-ink,#F2F2F4)]">
+                  {MODULE_LABELS[key]}:{" "}
+                </span>
                 {MODULE_EFFECTS[key]}
               </li>
             ))}
@@ -137,17 +182,45 @@ function ModuleCard({
   const missing = MODULE_REQUIREMENTS[moduleKey].filter((key) => !modules[key]).map((key) => MODULE_LABELS[key]);
 
   return (
-    <li
+    <div
       className={cn(
-        "flex flex-col border bg-card px-5 py-5 transition-colors sm:px-6",
-        on ? "border-[color:var(--iris-accent)]" : "border-border",
-        !available && "opacity-70",
+        "flex w-full flex-col rounded-xl border p-5 transition-[border-color,background-color,box-shadow] duration-200 ease-out sm:p-6 motion-reduce:transition-none",
+        on
+          ? "border-[var(--home-accent,#E85A2D)] bg-[rgba(232,90,45,0.06)] shadow-[0_0_0_1px_rgba(232,90,45,0.22)]"
+          : available
+            ? "border-white/[0.07] bg-[var(--home-surface,#121418)] hover:border-white/[0.14]"
+            : "border-transparent bg-[#0F1115]",
       )}
     >
-      <div className="flex items-start justify-between gap-4">
-        <label htmlFor={id} className="flex cursor-pointer items-center gap-3">
-          <copy.icon aria-hidden className="h-5 w-5 text-[color:var(--iris-accent)]" strokeWidth={1.75} />
-          <span className="text-[17px] font-medium tracking-[-0.3px]">{MODULE_LABELS[moduleKey]}</span>
+      <div className="flex items-center justify-between gap-4">
+        <label
+          htmlFor={id}
+          className={cn(
+            "flex min-w-0 items-center gap-3",
+            available ? "cursor-pointer" : "cursor-not-allowed",
+          )}
+        >
+          <span
+            className={cn(
+              "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-[background-color,color] duration-200 motion-reduce:transition-none",
+              on
+                ? "bg-[rgba(232,90,45,0.16)] text-[var(--home-accent-ink,#FF7A4D)]"
+                : available
+                  ? "bg-[var(--home-surface-recessed,#191C22)] text-[var(--home-ink,#F2F2F4)]"
+                  : "bg-[var(--home-surface,#121418)] text-[var(--home-ink-subtle,#7E8390)]",
+            )}
+          >
+            <copy.icon aria-hidden className="h-5 w-5" strokeWidth={1.75} />
+          </span>
+          <span
+            className={cn(
+              "home-display text-[length:var(--home-text-body,1rem)] font-semibold tracking-[-0.015em]",
+              available ? "text-[var(--home-ink,#F2F2F4)]" : "text-[var(--home-ink-muted,#A6AAB5)]",
+            )}
+            style={{ fontFamily: "var(--home-font-display, 'Bricolage Grotesque', sans-serif)" }}
+          >
+            {MODULE_LABELS[moduleKey]}
+          </span>
         </label>
         <input
           id={id}
@@ -157,25 +230,49 @@ function ModuleCard({
           disabled={!available}
           aria-describedby={`${id}-req`}
           onChange={(event) => onChange(event.target.checked)}
-          className="iris-focusable mt-1 h-4 w-4 shrink-0 cursor-pointer accent-[color:var(--iris-accent)] disabled:cursor-not-allowed"
+          className={cn(
+            "relative inline-flex h-7 w-12 shrink-0 cursor-pointer appearance-none items-center rounded-full border p-[3px] transition-[background-color,border-color,box-shadow] duration-200 ease-out motion-reduce:transition-none",
+            "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--home-accent-ink,#FF7A4D)]",
+            "after:absolute after:-inset-y-2 after:inset-x-0 after:content-['']",
+            "before:block before:h-5 before:w-5 before:rounded-full before:shadow-[0_1px_2px_rgba(0,0,0,0.4)] before:transition-[translate,background-color] before:duration-200 before:ease-out before:content-[''] motion-reduce:before:transition-none",
+            on
+              ? "border-transparent bg-[var(--home-accent,#E85A2D)] before:translate-x-5 before:bg-[#FFFFFF]"
+              : "border-[var(--home-border-strong,#3A3F4D)] bg-[var(--home-surface-recessed,#191C22)] hover:border-[var(--home-ink-subtle,#7E8390)] before:translate-x-0 before:bg-[var(--home-ink,#F2F2F4)]",
+            !available &&
+              "cursor-not-allowed border-[var(--home-border,#262932)] bg-[#14161B] hover:border-[var(--home-border,#262932)] before:bg-[var(--home-ink-subtle,#7E8390)]",
+          )}
         />
       </div>
-      <p id={`${id}-req`} className="mt-1 text-[11px] text-[color:var(--iris-ink-mute)]">
+      <p
+        id={`${id}-req`}
+        className={cn(
+          "mt-2.5 text-[length:var(--home-text-sm,0.875rem)] leading-[1.5]",
+          available
+            ? "text-[var(--home-ink-subtle,#7E8390)]"
+            : "font-medium text-[var(--home-ink-muted,#A6AAB5)]",
+        )}
+      >
         {requirements.length === 0
           ? "Radi samostalno, bez drugih modula."
           : available
             ? `Zahteva: ${requirements.join(" i ")}`
             : `Prvo uključite: ${missing.join(" i ")}`}
       </p>
-      <p className="mt-3 text-[13px] leading-[1.6] text-[color:var(--iris-ink-soft)]">{copy.body}</p>
-      <ul className="mt-4 space-y-1.5 text-[13px]">
+      <p className="mt-3 text-[length:var(--home-text-body,1rem)] leading-[1.6] text-[var(--home-ink-muted,#A6AAB5)]">
+        {copy.body}
+      </p>
+      <ul className="mt-4 space-y-2 text-[length:var(--home-text-body,1rem)] leading-[1.5] text-[var(--home-ink,#F2F2F4)]">
         {copy.points.map((point) => (
-          <li key={point} className="flex gap-2">
-            <Check aria-hidden className="mt-[3px] h-3.5 w-3.5 shrink-0 text-[color:var(--iris-status-done)]" />
+          <li key={point} className="flex items-start gap-2.5">
+            <Check
+              aria-hidden
+              className="mt-1 h-4 w-4 shrink-0 text-[var(--iris-status-done,#52C48A)]"
+              strokeWidth={2.25}
+            />
             <span>{point}</span>
           </li>
         ))}
       </ul>
-    </li>
+    </div>
   );
 }

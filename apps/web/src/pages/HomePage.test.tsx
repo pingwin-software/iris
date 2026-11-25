@@ -1,16 +1,24 @@
 // @vitest-environment jsdom
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { MemoryRouter } from "react-router-dom";
+import { FontScaleProvider } from "@/components/providers/FontScaleProvider";
 import HomePage from "./HomePage";
 
 beforeEach(() => {
   window.localStorage.clear();
+  window.history.replaceState(null, "", "/home");
+  document.documentElement.removeAttribute("data-iris-document-scroll");
+  document.documentElement.style.removeProperty("--iris-font-scale");
 });
 
 afterEach(() => {
   cleanup();
+  vi.restoreAllMocks();
+  document.documentElement.removeAttribute("data-iris-document-scroll");
+  document.documentElement.style.removeProperty("--iris-font-scale");
 });
 
 function renderHome(props: { signedIn?: boolean } = {}) {
@@ -93,5 +101,96 @@ describe("HomePage", () => {
     expect(document.title).toBe("Iris · radni nalozi za proizvodnju i usluge");
     unmount();
     expect(document.title).toBe("Iris");
+  });
+
+  it("marks the document root for document scrolling while mounted and cleans up on unmount", () => {
+    expect(document.documentElement).not.toHaveAttribute("data-iris-document-scroll");
+    const { unmount } = renderHome();
+    expect(document.documentElement).toHaveAttribute("data-iris-document-scroll", "true");
+    unmount();
+    expect(document.documentElement).not.toHaveAttribute("data-iris-document-scroll");
+  });
+
+  it("suspends FontScaleProvider scaling on /home and restores it when leaving", () => {
+    window.localStorage.setItem("iris-font-scale", "1.3");
+
+    const { rerender } = render(
+      <FontScaleProvider>
+        <MemoryRouter initialEntries={["/home"]}>
+          <HomePage />
+        </MemoryRouter>
+      </FontScaleProvider>,
+    );
+
+    const scaleRoot = document.querySelector<HTMLElement>("[data-iris-scale-root]");
+    expect(scaleRoot).not.toBeNull();
+    expect(scaleRoot!.style.transform).toBe("");
+    expect(scaleRoot!.style.height).toBe("");
+    expect(scaleRoot!.style.overflow).toBe("");
+    expect(document.documentElement.style.getPropertyValue("--iris-font-scale")).toBe("1");
+
+    rerender(
+      <FontScaleProvider>
+        <div>App shell</div>
+      </FontScaleProvider>,
+    );
+
+    expect(document.documentElement).not.toHaveAttribute("data-iris-document-scroll");
+    return waitFor(() => {
+      expect(scaleRoot!.style.transform).toBe("scale(1.3)");
+      expect(scaleRoot!.style.overflow).toBe("hidden");
+      expect(document.documentElement.style.getPropertyValue("--iris-font-scale")).toBe("1.3");
+    });
+  });
+
+  it("smooth-scrolls to a section on header nav click and ignores modified clicks", async () => {
+    const user = userEvent.setup();
+    renderHome();
+
+    const target = document.getElementById("cenovnik");
+    expect(target).not.toBeNull();
+    const scrollIntoView = vi.fn(() => Promise.resolve());
+    Object.defineProperty(target!, "scrollIntoView", {
+      value: scrollIntoView,
+      configurable: true,
+    });
+
+    const nav = screen.getByRole("navigation", { name: "Sekcije" });
+    const link = within(nav).getByRole("link", { name: "Cenovnik" });
+
+    // Modified click should fall back to default browser behavior without intercepting.
+    await user.keyboard("{Control>}");
+    await user.click(link);
+    await user.keyboard("{/Control}");
+    expect(scrollIntoView).not.toHaveBeenCalled();
+
+    await user.click(link);
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth", block: "start" });
+    expect(window.location.hash).toBe("#cenovnik");
+    await waitFor(() => {
+      expect(document.activeElement).toBe(target);
+    });
+  });
+
+  it("closes the mobile drawer and scrolls without throwing when scrollIntoView returns void", async () => {
+    const user = userEvent.setup();
+    renderHome();
+
+    const target = document.getElementById("uloge");
+    expect(target).not.toBeNull();
+    const scrollIntoView = vi.fn();
+    Object.defineProperty(target!, "scrollIntoView", {
+      value: scrollIntoView,
+      configurable: true,
+    });
+
+    await user.click(screen.getByRole("button", { name: "Meni" }));
+    const dialog = screen.getByRole("dialog", { name: "Navigacija" });
+    expect(dialog).toHaveAttribute("open");
+
+    await user.click(within(dialog).getByRole("link", { name: "Uloge" }));
+    expect(dialog).not.toHaveAttribute("open");
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth", block: "start" });
+    expect(window.location.hash).toBe("#uloge");
   });
 });

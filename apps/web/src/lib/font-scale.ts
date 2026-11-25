@@ -51,16 +51,25 @@ export function persistFontScale(scale: number): void {
   }
 }
 
+export interface ApplyFontScaleOptions {
+  /** Suspend wrapper scaling on document-scrolling pages without erasing saved preference. */
+  suspend?: boolean;
+}
+
 // Applies the scale to `target` (the wrapper that contains the whole app and
 // the overlay portal node). `--iris-font-scale` is also published on the root
 // element for any CSS that needs the factor (e.g. `.iris-screen`).
-export function applyFontScale(scale: number, target: HTMLElement | null): void {
-  const clamped = clampFontScale(scale);
-  document.documentElement.style.setProperty("--iris-font-scale", String(clamped));
+export function applyFontScale(
+  scale: number,
+  target: HTMLElement | null,
+  options?: ApplyFontScaleOptions,
+): void {
+  const effective = options?.suspend ? DEFAULT_FONT_SCALE : clampFontScale(scale);
+  document.documentElement.style.setProperty("--iris-font-scale", String(effective));
 
   if (!target) return;
 
-  if (clamped === DEFAULT_FONT_SCALE) {
+  if (effective === DEFAULT_FONT_SCALE) {
     target.style.removeProperty("transform");
     target.style.removeProperty("transform-origin");
     target.style.removeProperty("width");
@@ -73,9 +82,9 @@ export function applyFontScale(scale: number, target: HTMLElement | null): void 
   // top-left so it fills the real viewport. Top-level screens are `position:
   // fixed` (AppShell, Login, public tracking); the `transform` makes the
   // wrapper their containing block, so they stay pinned to the visible area.
-  target.style.transform = `scale(${clamped})`;
+  target.style.transform = `scale(${effective})`;
   target.style.transformOrigin = "0 0";
-  target.style.width = `calc(100vw / ${clamped})`;
-  target.style.height = `calc(100dvh / ${clamped})`;
+  target.style.width = `calc(100vw / ${effective})`;
+  target.style.height = `calc(100dvh / ${effective})`;
   target.style.overflow = "hidden";
 }

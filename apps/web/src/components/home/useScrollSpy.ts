@@ -1,34 +1,82 @@
 import { useEffect, useState } from "react";
 
 /**
- * Which of the given sections is in view, for the landing page's top bar.
- * Observes a band in the middle of the viewport, so the active entry changes
- * when a section's body (not just its edge) is on screen. Without
- * IntersectionObserver (jsdom) nothing is ever active.
+ * Tracks which landing-page section is currently in view for the top bar and
+ * mobile navigation drawer. Maintains the visible section set across observer
+ * batches so short sections are not lost on fast scrolls, clears when back at
+ * the top of the hero, and degrades to null when IntersectionObserver is absent.
  */
 export function useScrollSpy(ids: readonly string[]): string | null {
   const [active, setActive] = useState<string | null>(null);
+  const idsKey = ids.join(",");
 
   useEffect(() => {
     if (typeof IntersectionObserver === "undefined") return;
-    const elements = ids
+    const sectionIds = idsKey ? idsKey.split(",") : [];
+    const elements = sectionIds
       .map((id) => document.getElementById(id))
       .filter((element): element is HTMLElement => element !== null);
     if (elements.length === 0) return;
 
+    const visibleIds = new Set<string>();
+
+    const updateActive = (): void => {
+      if (window.scrollY < 80) {
+        setActive(null);
+        return;
+      }
+
+      const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 24;
+      if (atBottom) {
+        setActive(sectionIds[sectionIds.length - 1] ?? null);
+        return;
+      }
+
+      const firstVisible = sectionIds.find((id) => visibleIds.has(id));
+      if (firstVisible) {
+        setActive(firstVisible);
+      }
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.filter((entry) => entry.isIntersecting);
-        if (visible.length === 0) return;
-        // The topmost intersecting section wins.
-        visible.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        setActive(visible[0].target.id);
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            visibleIds.add(entry.target.id);
+          } else {
+            visibleIds.delete(entry.target.id);
+          }
+        }
+        updateActive();
       },
-      { rootMargin: "-35% 0px -55% 0px", threshold: 0 },
+      { rootMargin: "-18% 0px -60% 0px", threshold: 0 },
     );
-    for (const element of elements) observer.observe(element);
-    return () => observer.disconnect();
-  }, [ids]);
+
+    for (const element of elements) {
+      observer.observe(element);
+    }
+
+    const onScroll = (): void => {
+      if (window.scrollY < 80) {
+        setActive(null);
+        return;
+      }
+      const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 24;
+      if (atBottom) {
+        setActive(sectionIds[sectionIds.length - 1] ?? null);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [idsKey]);
 
   return active;
 }

@@ -1,4 +1,4 @@
-import { Children, isValidElement, useEffect, type ReactNode } from "react";
+import { Children, isValidElement, useEffect, useLayoutEffect, type ReactNode } from "react";
 import { Link, Navigate, NavLink, useLocation, useParams } from "react-router-dom";
 import Markdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -119,6 +119,13 @@ export default function RegulationsPage(): React.JSX.Element {
   const { slug } = useParams();
   const { hash } = useLocation();
   const doc = findRegulationDoc(slug);
+
+  useLayoutEffect(() => {
+    document.documentElement.setAttribute("data-iris-document-scroll", "true");
+    return () => {
+      document.documentElement.removeAttribute("data-iris-document-scroll");
+    };
+  }, []);
 
   useEffect(() => {
     if (!doc) return;
