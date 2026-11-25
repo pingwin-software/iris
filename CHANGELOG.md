@@ -2,6 +2,12 @@
 
 All notable changes to Iris. Generated from `.changeset/` files on merge to main; do not edit released entries by hand.
 
+## 2.30.3 — 2026-11-25
+
+### Patch
+
+- Redesign the public /home landing page layout, typography, and interactive product demos.
+
 ## 2.30.2 — 2026-11-12
 
 ### Patch
