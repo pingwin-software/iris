@@ -102,7 +102,7 @@ export function ModulePlayground(): React.JSX.Element {
         <div className="bg-[var(--home-surface-recessed,#191C22)] px-5 py-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <IrisMark className="h-5 w-5 shrink-0 text-[var(--home-ink,#F2F2F4)]" />
+              <IrisMark className="h-5 w-5 shrink-0 text-[var(--home-ink,#F2F2F4)]" aria-hidden />
               <span
                 className="home-display text-[length:var(--home-text-body,1rem)] font-bold tracking-[-0.02em] text-[var(--home-ink,#F2F2F4)]"
                 style={{ fontFamily: "var(--home-font-display, 'Bricolage Grotesque', sans-serif)" }}
@@ -188,8 +188,8 @@ function ModuleCard({
         on
           ? "border-[var(--home-accent,#E85A2D)] bg-[rgba(232,90,45,0.06)] shadow-[0_0_0_1px_rgba(232,90,45,0.22)]"
           : available
-            ? "border-white/[0.07] bg-[var(--home-surface,#121418)] hover:border-white/[0.14]"
-            : "border-transparent bg-[#0F1115]",
+            ? "border-white/[0.09] bg-[var(--home-surface,#121418)] hover:border-white/[0.16]"
+            : "border-white/[0.05] bg-[#101318]",
       )}
     >
       <div className="flex items-center justify-between gap-4">
@@ -207,7 +207,7 @@ function ModuleCard({
                 ? "bg-[rgba(232,90,45,0.16)] text-[var(--home-accent-ink,#FF7A4D)]"
                 : available
                   ? "bg-[var(--home-surface-recessed,#191C22)] text-[var(--home-ink,#F2F2F4)]"
-                  : "bg-[var(--home-surface,#121418)] text-[var(--home-ink-subtle,#7E8390)]",
+                  : "bg-white/[0.04] text-[var(--home-ink-subtle,#7E8390)]",
             )}
           >
             <copy.icon aria-hidden className="h-5 w-5" strokeWidth={1.75} />
@@ -226,6 +226,7 @@ function ModuleCard({
           id={id}
           type="checkbox"
           role="switch"
+          {...({ switch: "" } as Record<string, string>)}
           checked={on}
           disabled={!available}
           aria-describedby={`${id}-req`}

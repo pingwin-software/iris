@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { MemoryRouter } from "react-router-dom";
@@ -17,6 +17,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
   document.documentElement.removeAttribute("data-iris-document-scroll");
   document.documentElement.style.removeProperty("--iris-font-scale");
 });
@@ -33,9 +34,15 @@ describe("HomePage", () => {
   it("presents the product and every section a prospective organization needs", () => {
     renderHome();
 
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Znajte šta Vam donosi novac.",
-    );
+    const heroHeading = screen.getByRole("heading", { level: 1 });
+    expect(heroHeading).toHaveTextContent("Znajte šta Vam donosi novac.");
+    const heroSection = heroHeading.closest("section");
+    expect(heroSection).not.toBeNull();
+    const heroGrid = screen.getByTestId("hero-grid");
+    expect(heroGrid).toBeInTheDocument();
+    expect(heroGrid).toHaveClass("iris-home-grid-bg");
+    expect(heroGrid).toHaveAttribute("aria-hidden", "true");
+    expect(heroSection).toContainElement(heroGrid);
     for (const name of [
       "Vidite gde se zarađuje, a gde gubi vreme",
       "Sve što Vaša firma radi svaki dan",
@@ -156,6 +163,17 @@ describe("HomePage", () => {
     });
 
     const nav = screen.getByRole("navigation", { name: "Sekcije" });
+    expect(nav).toHaveClass("iris-home-spy-nav");
+    expect(nav).toHaveAttribute("data-spy-active", "false");
+    for (const navLink of within(nav).getAllByRole("link")) {
+      expect(navLink).not.toHaveAttribute("aria-current", "location");
+    }
+    Object.defineProperty(window, "scrollY", { value: 80, configurable: true });
+    fireEvent.scroll(window);
+    expect(nav).toHaveAttribute("data-spy-active", "true");
+    Object.defineProperty(window, "scrollY", { value: 0, configurable: true });
+    fireEvent.scroll(window);
+    expect(nav).toHaveAttribute("data-spy-active", "false");
     const link = within(nav).getByRole("link", { name: "Cenovnik" });
 
     // Modified click should fall back to default browser behavior without intercepting.
@@ -192,5 +210,131 @@ describe("HomePage", () => {
     expect(dialog).not.toHaveAttribute("open");
     expect(scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth", block: "start" });
     expect(window.location.hash).toBe("#uloge");
+  });
+
+  it("closes the mobile drawer on close button, backdrop click, and cancelable Escape", async () => {
+    const user = userEvent.setup();
+    renderHome();
+
+    const menuButton = screen.getByRole("button", { name: "Meni" });
+    await user.click(menuButton);
+
+    const dialog = screen.getByRole("dialog", { name: "Navigacija" });
+    expect(dialog).toHaveAttribute("open");
+    expect(menuButton).toHaveAttribute("aria-expanded", "true");
+    expect(dialog.querySelector(".iris-home-drawer-scroller > .iris-home-drawer-sheet")).not.toBeNull();
+
+    await user.click(within(dialog).getByRole("button", { name: "Zatvori meni" }));
+    expect(dialog).not.toHaveAttribute("open");
+    expect(menuButton).toHaveAttribute("aria-expanded", "false");
+    expect(menuButton).toHaveFocus();
+
+    await user.click(menuButton);
+    expect(dialog).toHaveAttribute("open");
+    const scroller = dialog.querySelector<HTMLElement>(".iris-home-drawer-scroller");
+    expect(scroller).not.toBeNull();
+    await user.click(scroller!);
+    expect(dialog).not.toHaveAttribute("open");
+    expect(menuButton).toHaveFocus();
+
+    await user.click(menuButton);
+    expect(dialog).toHaveAttribute("open");
+    const cancelEvent = new Event("cancel", { cancelable: true });
+    act(() => {
+      dialog.dispatchEvent(cancelEvent);
+    });
+    expect(cancelEvent.defaultPrevented).toBe(true);
+    expect(dialog).not.toHaveAttribute("open");
+    expect(menuButton).toHaveFocus();
+  });
+
+  it("animates drawer slide-in/out with IntersectionObserver and scroll backdrop fallback", async () => {
+    const user = userEvent.setup();
+    const rafQueue: FrameRequestCallback[] = [];
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
+      rafQueue.push(cb);
+      return rafQueue.length;
+    });
+    vi.stubGlobal("matchMedia", vi.fn(() => ({
+      matches: false,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    })));
+    vi.stubGlobal("CSS", { supports: vi.fn(() => false) });
+
+    const callbacksByTarget = new Map<Element, IntersectionObserverCallback>();
+    class MockIntersectionObserver {
+      private cb: IntersectionObserverCallback;
+      constructor(cb: IntersectionObserverCallback) {
+        this.cb = cb;
+      }
+      observe(target: Element): void {
+        callbacksByTarget.set(target, this.cb);
+      }
+      disconnect(): void {}
+      unobserve(): void {}
+      takeRecords(): IntersectionObserverEntry[] {
+        return [];
+      }
+      root = null;
+      rootMargin = "";
+      thresholds = [];
+    }
+    vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
+
+    renderHome();
+
+    const dialog = document.querySelector<HTMLDialogElement>("dialog.iris-home-drawer")!;
+    expect(dialog).not.toBeNull();
+    const scroller = dialog.querySelector<HTMLElement>(".iris-home-drawer-scroller")!;
+    const sheet = dialog.querySelector<HTMLElement>(".iris-home-drawer-sheet")!;
+    Object.defineProperty(sheet, "offsetWidth", { value: 320, configurable: true });
+    const scrollTo = vi.fn();
+    Object.defineProperty(scroller, "scrollTo", { value: scrollTo, configurable: true });
+
+    const observerCb = callbacksByTarget.get(sheet);
+    expect(observerCb).toBeDefined();
+
+    const menuButton = screen.getByRole("button", { name: "Meni" });
+    await user.click(menuButton);
+
+    expect(dialog).toHaveAttribute("open");
+    expect(scrollTo).toHaveBeenCalledWith({ left: 0, behavior: "instant" });
+    expect(scrollTo).toHaveBeenCalledTimes(1);
+
+    // An initial ratio=0 observation before entering must not prematurely close the dialog.
+    act(() => {
+      observerCb!([{ intersectionRatio: 0, target: sheet } as unknown as IntersectionObserverEntry], {} as IntersectionObserver);
+    });
+    expect(dialog).toHaveAttribute("open");
+
+    // Flush the two requestAnimationFrame steps to trigger the slide-in scroll.
+    act(() => {
+      rafQueue.shift()?.(0);
+      rafQueue.shift()?.(16);
+    });
+    expect(scrollTo).toHaveBeenLastCalledWith({ left: 320, behavior: "auto" });
+
+    // Scroll fallback updates --drawer-backdrop while animation-timeline is unsupported.
+    Object.defineProperty(scroller, "scrollLeft", { value: 160, configurable: true });
+    fireEvent.scroll(scroller);
+    expect(dialog.style.getPropertyValue("--drawer-backdrop")).toBe("0.5");
+
+    act(() => {
+      observerCb!([{ intersectionRatio: 1, target: sheet } as unknown as IntersectionObserverEntry], {} as IntersectionObserver);
+    });
+    expect(menuButton).toHaveAttribute("aria-expanded", "true");
+
+    // Clicking close scrolls back to 0 and waits for IntersectionObserver to close once off-screen.
+    await user.click(within(dialog).getByRole("button", { name: "Zatvori meni" }));
+    expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, behavior: "auto" });
+    expect(dialog).toHaveAttribute("open");
+
+    act(() => {
+      observerCb!([{ intersectionRatio: 0, target: sheet } as unknown as IntersectionObserverEntry], {} as IntersectionObserver);
+    });
+    expect(dialog).not.toHaveAttribute("open");
+    expect(menuButton).toHaveAttribute("aria-expanded", "false");
+    expect(dialog.style.getPropertyValue("--drawer-backdrop")).toBe("");
   });
 });

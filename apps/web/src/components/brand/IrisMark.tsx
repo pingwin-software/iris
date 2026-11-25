@@ -1,5 +1,6 @@
 interface IrisMarkProps {
   className?: string;
+  "aria-hidden"?: boolean;
 }
 
 /**
@@ -8,7 +9,7 @@ interface IrisMarkProps {
  * while the petal always uses the ember accent, so the mark adapts to light/dark
  * themes. Source: design system `assets/brand/iris-mark.svg`.
  */
-export function IrisMark({ className }: IrisMarkProps): React.JSX.Element {
+export function IrisMark({ className, "aria-hidden": ariaHidden }: IrisMarkProps): React.JSX.Element {
   return (
     <svg
       viewBox="0 0 48 48"
@@ -16,8 +17,9 @@ export function IrisMark({ className }: IrisMarkProps): React.JSX.Element {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
-      aria-label="Iris"
+      aria-hidden={ariaHidden || undefined}
+      role={ariaHidden ? undefined : "img"}
+      aria-label={ariaHidden ? undefined : "Iris"}
     >
       <path d="M24 30 V44" stroke="currentColor" strokeWidth="2.2" />
       <path

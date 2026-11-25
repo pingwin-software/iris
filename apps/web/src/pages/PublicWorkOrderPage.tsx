@@ -46,53 +46,55 @@ function PublicWorkOrderPage(): React.JSX.Element {
   }, [token, t]);
 
   return (
-    <main className="min-h-screen bg-background px-5 py-10 text-foreground">
-      <section className="mx-auto max-w-2xl border border-border bg-card px-6 py-7">
-        <div className="text-[10px] uppercase tracking-[1.5px] text-[color:var(--iris-ink-mute)]">
-          {t("public.eyebrow")}
-        </div>
-        {loading && (
-          <div className="mt-8 flex items-center gap-2 text-sm text-[color:var(--iris-ink-soft)]">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            {t("public.loading")}
+    <main data-testid="public-work-order-screen" className="iris-screen bg-background text-foreground">
+      <div className="min-h-full px-5 py-10">
+        <section className="mx-auto max-w-2xl border border-border bg-card px-6 py-7">
+          <div className="text-[10px] uppercase tracking-[1.5px] text-[color:var(--iris-ink-mute)]">
+            {t("public.eyebrow")}
           </div>
-        )}
-        {!loading && error && (
-          <p className="mt-8 border-l-2 border-[color:var(--iris-status-cancelled)] bg-[color:var(--iris-status-cancelled)]/10 px-4 py-3 text-sm text-[color:var(--iris-status-cancelled)]">
-            {error}
-          </p>
-        )}
-        {!loading && status && (
-          <div className="mt-5">
-            <h1 className="text-[28px] font-normal tracking-[-0.6px]">
-              {status.orderNumber}
-            </h1>
-            <p className="mt-2 text-sm text-[color:var(--iris-ink-soft)]">
-              {status.clientName}
-            </p>
-            <div className="mt-7 grid gap-4 sm:grid-cols-2">
-              <PublicField label={t("public.jobDescription")} value={status.jobDescription} />
-              <PublicField
-                label={t("public.status")}
-                value={getWorkOrderStatusLabel(status.status)}
-              />
-              <PublicField
-                label={t("public.dueDate")}
-                value={status.dueDate ? formatWorkOrderDate(status.dueDate) : "-"}
-              />
-              <PublicField
-                label={t("public.customerNotes")}
-                value={String(status.customerNoteCount)}
-              />
+          {loading && (
+            <div className="mt-8 flex items-center gap-2 text-sm text-[color:var(--iris-ink-soft)]">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {t("public.loading")}
             </div>
-            {status.signedBy && (
-              <p className="mt-6 text-sm text-[color:var(--iris-ink-soft)]">
-                {t("public.signedBy")} <span className="text-foreground">{status.signedBy}</span>
+          )}
+          {!loading && error && (
+            <p className="mt-8 border-l-2 border-[color:var(--iris-status-cancelled)] bg-[color:var(--iris-status-cancelled)]/10 px-4 py-3 text-sm text-[color:var(--iris-status-cancelled)]">
+              {error}
+            </p>
+          )}
+          {!loading && status && (
+            <div className="mt-5">
+              <h1 className="text-[28px] font-normal tracking-[-0.6px]">
+                {status.orderNumber}
+              </h1>
+              <p className="mt-2 text-sm text-[color:var(--iris-ink-soft)]">
+                {status.clientName}
               </p>
-            )}
-          </div>
-        )}
-      </section>
+              <div className="mt-7 grid gap-4 sm:grid-cols-2">
+                <PublicField label={t("public.jobDescription")} value={status.jobDescription} />
+                <PublicField
+                  label={t("public.status")}
+                  value={getWorkOrderStatusLabel(status.status)}
+                />
+                <PublicField
+                  label={t("public.dueDate")}
+                  value={status.dueDate ? formatWorkOrderDate(status.dueDate) : "-"}
+                />
+                <PublicField
+                  label={t("public.customerNotes")}
+                  value={String(status.customerNoteCount)}
+                />
+              </div>
+              {status.signedBy && (
+                <p className="mt-6 text-sm text-[color:var(--iris-ink-soft)]">
+                  {t("public.signedBy")} <span className="text-foreground">{status.signedBy}</span>
+                </p>
+              )}
+            </div>
+          )}
+        </section>
+      </div>
     </main>
   );
 }

@@ -227,7 +227,7 @@ export function AppShell({ children }: AppShellProps): React.JSX.Element {
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
           <div className="flex min-w-0 items-center gap-2.5 font-medium text-foreground">
-            <IrisMark className="h-8 w-8 shrink-0 text-foreground" />
+            <IrisMark className="h-8 w-8 shrink-0 text-foreground" aria-hidden />
             <div className="flex flex-col items-start text-left">
               <span className="text-[18px] font-semibold leading-none tracking-[-0.5px] whitespace-nowrap">
                 Iris
@@ -265,7 +265,7 @@ export function AppShell({ children }: AppShellProps): React.JSX.Element {
             {/* Mobile drawer: the brand, which the drawer otherwise hides by
                 covering the top bar. */}
             <div className="flex min-w-0 items-center gap-2.5 py-1 font-medium text-foreground lg:hidden">
-              <IrisMark className="h-8 w-8 shrink-0 text-foreground" />
+              <IrisMark className="h-8 w-8 shrink-0 text-foreground" aria-hidden />
               <div className="flex flex-col items-start text-left">
                 <span className="text-[18px] font-semibold leading-none tracking-[-0.5px] whitespace-nowrap">
                   Iris
@@ -288,7 +288,7 @@ export function AppShell({ children }: AppShellProps): React.JSX.Element {
                   isSidebarCollapsed ? "lg:w-full lg:justify-center lg:gap-0" : "gap-2.5"
                 )}
               >
-                <IrisMark className="h-8 w-8 shrink-0 text-foreground" />
+                <IrisMark className="h-8 w-8 shrink-0 text-foreground" aria-hidden />
                 <div className={cn(
                   "flex flex-col items-start text-left transition-all duration-300 ease-[var(--iris-ease-out-decisive)]",
                   isSidebarCollapsed ? "lg:w-0 lg:opacity-0 lg:overflow-hidden lg:pointer-events-none" : "lg:w-auto lg:opacity-100"

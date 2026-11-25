@@ -3,16 +3,16 @@ import { resolve } from 'node:path'
 import { defineConfig, searchForWorkspaceRoot } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { irisServiceWorker, irisVersionFile } from './pwa/vite-plugin'
+import { irisServiceWorker, irisVersionFile } from './pwa/vite-plugin.ts'
 
 // The app version lives in the repository-root VERSION file, bumped on every
 // merge to main from .changeset/ entries (see .changeset/README.md).
-const appVersion = readFileSync(resolve(__dirname, '../../VERSION'), 'utf8').trim()
+const appVersion = readFileSync(resolve(import.meta.dirname, '../../VERSION'), 'utf8').trim()
 
 // The public regulations guide (/home/propisi) renders the Markdown files kept in
 // docs/drzavne-integracije, outside this app; the dev server must be allowed to
 // read them (the Dockerfile copies them into the web build stage).
-const regulationDocsDir = resolve(__dirname, '../../docs/drzavne-integracije')
+const regulationDocsDir = resolve(import.meta.dirname, '../../docs/drzavne-integracije')
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -21,8 +21,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve('src'),
-      '@renderer': resolve('src'),
+      '@': resolve(import.meta.dirname, 'src'),
+      '@renderer': resolve(import.meta.dirname, 'src'),
       '@regulation-docs': regulationDocsDir,
     },
   },

@@ -103,7 +103,7 @@ function IrisWordmark(): React.JSX.Element {
       }}
       className="flex select-none items-center justify-center gap-3 text-[44px] font-normal leading-none tracking-[-1.5px] text-foreground sm:text-[56px] sm:tracking-[-2px] lg:flex-col lg:items-start"
     >
-      <IrisMark className="h-12 w-12 shrink-0 text-foreground sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
+      <IrisMark className="h-12 w-12 shrink-0 text-foreground sm:h-14 sm:w-14 lg:h-16 lg:w-16" aria-hidden />
       <span>Iris</span>
     </div>
   );
