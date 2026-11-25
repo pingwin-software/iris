@@ -22,6 +22,7 @@
 html:has(.iris-home-theme),
 html[data-iris-document-scroll="true"] {
   scroll-padding-top: 5rem;
+  scrollbar-gutter: stable;
 }
 
 .iris-home-theme,
@@ -273,6 +274,26 @@ html[data-iris-document-scroll="true"] {
   }
 }
 
+/* Vertical in-page wiki TOC links (left accent border, no bottom underline) */
+.iris-wiki-toc-link {
+  transition-property: color, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.iris-home-spy-nav[data-spy-active="true"] .iris-wiki-toc-link[aria-current="location"] {
+  color: var(--home-ink, #111215);
+  border-left-color: var(--home-accent, #D4481D);
+  font-weight: 500;
+}
+
+@media (forced-colors: active) {
+  .iris-home-spy-nav[data-spy-active="true"] .iris-wiki-toc-link[aria-current="location"] {
+    border-left-color: Highlight;
+    text-decoration: underline;
+  }
+}
+
 .iris-home-btn {
   transition-property: background-color, border-color, color, transform, box-shadow;
   transition-duration: 160ms;
@@ -447,6 +468,7 @@ html[data-iris-document-scroll="true"] {
   .iris-home-header,
   .iris-home-nav-link,
   .iris-home-nav-link::after,
+  .iris-wiki-toc-link,
   .iris-home-btn,
   .iris-home-faq details::details-content,
   .iris-reveal {
