@@ -2,6 +2,12 @@
 
 All notable changes to Iris. Generated from `.changeset/` files on merge to main; do not edit released entries by hand.
 
+## 2.30.4 — 2026-11-25
+
+### Patch
+
+- Restore the /home hero drafting grid, upgrade landing page navigation and scrollspy, and fix frontend scroll and accessibility bugs.
+
 ## 2.30.3 — 2026-11-25
 
 ### Patch
