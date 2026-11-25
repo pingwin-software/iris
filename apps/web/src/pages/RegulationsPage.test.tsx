@@ -12,6 +12,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup()
   vi.restoreAllMocks()
+  document.documentElement.removeAttribute('data-iris-document-scroll')
 })
 
 function renderAt(path: string): ReturnType<typeof render> {
@@ -25,8 +26,15 @@ function renderAt(path: string): ReturnType<typeof render> {
 }
 
 describe('RegulationsPage', () => {
-  it('shows the overview with the list of documents', () => {
-    renderAt('/home/propisi')
+  it('shows the overview with the editorial theme, hero grid, chapter nav and footer', () => {
+    const { container } = renderAt('/home/propisi')
+    expect(container.querySelector('.iris-home-theme')).toBeInTheDocument()
+
+    const heroGrid = screen.getByTestId('regulations-hero-grid')
+    expect(heroGrid).toHaveClass('iris-home-grid-bg')
+    expect(heroGrid).toHaveAttribute('aria-hidden', 'true')
+    expect(screen.getByText('Vodič kroz propise · Poglavlje 1 od 5')).toBeInTheDocument()
+
     expect(screen.getByRole('heading', { level: 1, name: 'Propisi o e-fakturama, e-otpremnicama i fiskalizaciji: pregled' })).toBeInTheDocument()
     const nav = screen.getByRole('navigation', { name: 'Propisi' })
     expect(within(nav).getAllByRole('link').map((link) => link.getAttribute('href'))).toEqual([
@@ -40,12 +48,52 @@ describe('RegulationsPage', () => {
     expect(screen.getAllByRole('link', { name: 'Fiskalizacija' })[0]).toHaveAttribute('href', '/home/propisi/fiskalizacija')
     expect(screen.getByRole('link', { name: 'Iris' })).toHaveAttribute('href', '/home')
     expect(screen.queryByRole('img', { name: 'Iris' })).not.toBeInTheDocument()
+
+    const chapterNav = screen.getByRole('navigation', { name: 'Prethodno i sledeće poglavlje' })
+    expect(within(chapterNav).queryByText('Prethodno poglavlje')).not.toBeInTheDocument()
+    expect(within(chapterNav).getByRole('link', { name: /Sledeće poglavlje/ })).toHaveAttribute(
+      'href',
+      '/home/propisi/elektronske-fakture',
+    )
+
+    const footer = screen.getByRole('contentinfo')
+    expect(footer).toHaveClass('iris-home-carbon')
+    const footerNav = within(footer).getByRole('navigation', { name: 'Podnožje' })
+    expect(within(footerNav).getByRole('link', { name: 'Početna' })).toHaveAttribute('href', '/home')
+    expect(within(footerNav).getByRole('link', { name: 'Prijava' })).toBeInTheDocument()
+    expect(within(footerNav).getByRole('link', { name: 'Fiskalizacija' })).toHaveAttribute(
+      'href',
+      '/home/propisi/fiskalizacija',
+    )
   })
 
-  it('renders a document with tables, anchors and external links in a new tab', () => {
+  it('renders a document with in-page TOC, prev/next links, tables, anchors and external links in a new tab', () => {
     renderAt('/home/propisi/fiskalizacija')
+    expect(screen.getByText('Vodič kroz propise · Poglavlje 4 od 5')).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 1, name: 'Fiskalizacija (fiskalne kase)' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Otvorena pitanja' })).toHaveAttribute('id', 'otvorena-pitanja')
+
+    const tocNav = screen.getByRole('navigation', { name: 'Na ovoj stranici' })
+    expect(tocNav).toHaveClass('iris-home-spy-nav')
+    expect(tocNav).toHaveAttribute('data-spy-active', 'true')
+    const tocLinks = within(tocNav).getAllByRole('link')
+    expect(tocLinks.length).toBeGreaterThanOrEqual(2)
+    expect(within(tocNav).getByRole('link', { name: 'Otvorena pitanja' })).toHaveAttribute('href', '#otvorena-pitanja')
+    for (const link of tocLinks) {
+      const targetId = link.getAttribute('href')?.slice(1) ?? ''
+      expect(document.getElementById(targetId)).not.toBeNull()
+    }
+
+    const chapterNav = screen.getByRole('navigation', { name: 'Prethodno i sledeće poglavlje' })
+    expect(within(chapterNav).getByRole('link', { name: /Prethodno poglavlje/ })).toHaveAttribute(
+      'href',
+      '/home/propisi/elektronske-otpremnice',
+    )
+    expect(within(chapterNav).getByRole('link', { name: /Sledeće poglavlje/ })).toHaveAttribute(
+      'href',
+      '/home/propisi/izvori',
+    )
+
     expect(screen.getAllByRole('table').length).toBeGreaterThan(0)
     const external = screen.getAllByRole('link').find((link) => link.getAttribute('href')?.startsWith('https://'))
     expect(external).toHaveAttribute('target', '_blank')
